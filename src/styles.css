@@ -1,0 +1,152 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: "Atkinson Hyperlegible Next", system-ui, sans-serif;
+  --font-heading: var(--font-sans);
+  --font-mono: "Atkinson Hyperlegible Mono", ui-monospace, monospace;
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  /* Tokens do Votely que o shadcn não tem */
+  --color-field: var(--field);
+  --color-focus-glow: var(--focus-glow);
+  --color-warn: var(--warn);
+  --color-warn-foreground: var(--warn-foreground);
+  --color-warn-border: var(--warn-border);
+  --color-danger: var(--danger);
+  --color-danger-border: var(--danger-border);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/*
+ * Paleta do handoff (design_handoff_votely/README.md → Design Tokens).
+ * --muted é o fundo do avatar/skeleton; o "muted" de texto do design é
+ * --muted-foreground. --input é a borda forte (--border-strong do design) e
+ * --field é o fundo dos campos.
+ */
+:root {
+  --background: #f1f4f4;
+  --foreground: #0e1b1e;
+  --card: #ffffff;
+  --card-foreground: #0e1b1e;
+  --popover: #ffffff;
+  --popover-foreground: #0e1b1e;
+  --primary: #155e66;
+  --primary-foreground: #ffffff;
+  --secondary: #e0edee;
+  --secondary-foreground: #0e4a51;
+  --muted: #dae3e4;
+  --muted-foreground: #4a5a5e;
+  --accent: #e0edee;
+  --accent-foreground: #0e4a51;
+  --destructive: #7a1e1a;
+  --border: #d3dcdd;
+  --input: #869a9e;
+  --ring: #155e66;
+  --radius: 0.5rem;
+  --field: #ffffff;
+  --focus-glow: rgba(21, 94, 102, 0.22);
+  --warn: #fff4d9;
+  --warn-foreground: #5c3e00;
+  --warn-border: #e3bd68;
+  --danger: #fbecea;
+  --danger-border: #e5b0aa;
+  color-scheme: light;
+}
+
+.dark {
+  --background: #0a1315;
+  --foreground: #ecf2f3;
+  --card: #121f22;
+  --card-foreground: #ecf2f3;
+  --popover: #121f22;
+  --popover-foreground: #ecf2f3;
+  --primary: #6cc4cc;
+  --primary-foreground: #04262a;
+  --secondary: #163337;
+  --secondary-foreground: #8bd7de;
+  --muted: #223438;
+  --muted-foreground: #a6b5b8;
+  --accent: #163337;
+  --accent-foreground: #8bd7de;
+  --destructive: #f5b8b2;
+  --border: #26373b;
+  --input: #566e73;
+  --ring: #6cc4cc;
+  --field: #0d181b;
+  --focus-glow: rgba(108, 196, 204, 0.3);
+  --warn: #2a2210;
+  --warn-foreground: #f3d48e;
+  --warn-border: #6a5320;
+  --danger: #341918;
+  --danger-border: #6e302c;
+  color-scheme: dark;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-size: 18px;
+    line-height: 1.45;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@page {
+  size: A4;
+  margin: 0;
+}
+
+@media print {
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}
