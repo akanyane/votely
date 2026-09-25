@@ -100,7 +100,9 @@ Lê o `consulta_cand_2026_BRASIL.csv` de dentro do `consulta_cand_2026.zip` (na 
 - **Candidaturas substituídas:** o TSE mantém o registro antigo e o novo com o mesmo número. O script fica com o mais recente (o `SQ_CANDIDATO` é sequencial) e descarta 117 registros antigos.
 - **Situação da candidatura:** em 25/09/2026 o TSE publica a coluna vazia (`#NE`) para todos. O mapeamento para *sub judice* e *indeferida* já está pronto em `scripts/candidatos.ts`; quando a coluna for preenchida, é conferir os valores e rodar de novo.
 
-Para atualizar: baixe o `consulta_cand_2026.zip` mais recente do TSE para a raiz e rode `bun run candidatos`.
+Para atualizar, baixe o `consulta_cand_2026.zip` mais recente em [Candidatos 2026 no Portal de Dados Abertos do TSE](https://dadosabertos.tse.jus.br), coloque na raiz do projeto e rode `bun run candidatos`.
+
+> O zip **não é versionado**. Além do que o app usa, ele traz CPF, título de eleitor e data de nascimento de todos os candidatos. Os JSONs gerados em `public/data` guardam só número, nome de urna, partido e `SQ_CANDIDATO`.
 
 ### `bun run fotos`
 

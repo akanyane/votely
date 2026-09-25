@@ -32,6 +32,10 @@ dist-ssr
 # convertidas em public/fotos são versionadas)
 .cache
 
+# CSV completo do TSE: tem CPF, título e nascimento dos candidatos.
+# O app só precisa de public/data (gerado a partir dele).
+consulta_cand_2026.zip
+
 # Metadados do Windows e arquivos de handoff de design
 *:Zone.Identifier
 Votely - Colinha digital.zip
