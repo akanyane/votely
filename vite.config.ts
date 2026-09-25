@@ -14,7 +14,21 @@ export default defineConfig({
   },
   plugins: [
     tailwindcss(),
-    tanstackStart(),
+    tanstackStart({
+      serverFns: {
+        // IDs legíveis e estáveis entre builds: /_serverFn/live-buscarResultado.
+        // Facilitam o teste de carga e o diagnóstico (já são públicos no bundle).
+        generateFunctionId: ({ filename, functionName }) => {
+          const base =
+            filename
+              .split('/')
+              .pop()
+              ?.replace(/\.[^.]+$/, '') ?? 'fn'
+          const nome = functionName.replace(/_createServerFn_handler$/, '')
+          return `${base === 'api' ? 'live' : base}-${nome}`
+        },
+      },
+    }),
     // react's vite plugin must come after start's vite plugin
     react(),
     // Camada de deploy; na Vercel detecta o preset sozinho

@@ -3,6 +3,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
+import { BannerApuracao } from '@/components/votely/BannerApuracao'
 import { BuscaDialog } from '@/components/votely/BuscaDialog'
 import { Cabecalho } from '@/components/votely/Cabecalho'
 import { CardCargo } from '@/components/votely/CardCargo'
@@ -11,11 +12,12 @@ import { FolhaImpressao } from '@/components/votely/FolhaImpressao'
 import { baixarImagemColinha } from '@/components/votely/imagemColinha'
 import { MinhaColinha } from '@/components/votely/MinhaColinha'
 import { montarResumo } from '@/components/votely/resumo'
+import { ELEICAO } from '@/config/election'
 import { useCandidatos } from '@/lib/candidatos'
+import { lerColinha, salvarColinha } from '@/lib/colinha'
 import {
   CARGOS,
   type CargoId,
-  isUf,
   nomeUf,
   type UF,
   type Votos,
@@ -25,8 +27,6 @@ import {
 export const Route = createFileRoute('/')({
   component: Home,
 })
-
-const STORAGE_KEY = 'votely-colinha'
 
 type Colinha = { uf: UF | ''; votos: Votos }
 
@@ -40,6 +40,8 @@ function Home() {
   })
   const { uf, votos } = useSelector(form.store, (s) => s.values)
   const [buscando, setBuscando] = useState<CargoId | null>(null)
+  // Colinha salva de outro turno (ex.: a do 1º turno quando já é o 2º)
+  const [turnoAntigo, setTurnoAntigo] = useState<1 | 2 | null>(null)
 
   const candidatos = useCandidatos(uf)
   const dados = candidatos?.dados
@@ -48,21 +50,20 @@ function Home() {
 
   // Restaura a colinha salva neste aparelho
   useEffect(() => {
-    try {
-      const salva = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? 'null')
-      if (salva && isUf(salva.uf)) {
-        // setFieldValue, e não reset(): o reset troca os defaultValues e o
-        // useForm os sobrescreve de volta no render seguinte
-        form.setFieldValue('uf', salva.uf)
-        form.setFieldValue('votos', { ...votosVazios(), ...salva.v })
-      }
-    } catch {}
+    const salva = lerColinha()
+    if (!salva) return
+    // setFieldValue, e não reset(): o reset troca os defaultValues e o
+    // useForm os sobrescreve de volta no render seguinte
+    form.setFieldValue('uf', salva.uf)
+    form.setFieldValue('votos', salva.v)
+    if (salva.turno !== ELEICAO.turno) setTurnoAntigo(salva.turno)
   }, [form])
 
   // Guarda no navegador (restaura ao reabrir) e baixa a colinha como imagem
   const salvar = async () => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ uf, v: votos }))
+      if (uf) salvarColinha({ uf, v: votos, turno: ELEICAO.turno })
+      setTurnoAntigo(null)
     } catch {}
     try {
       await baixarImagemColinha(uf, resumo)
@@ -78,6 +79,21 @@ function Home() {
     <>
       <div className="mx-auto max-w-[520px] px-4 pt-4 print:hidden lg:max-w-[1160px] lg:px-10 lg:pt-8">
         <Cabecalho />
+
+        <BannerApuracao />
+
+        {turnoAntigo && (
+          <div
+            role="status"
+            className="mb-4 rounded-xl border border-warn-border bg-warn px-4 py-3.5 text-[16px] text-warn-foreground"
+          >
+            <strong className="block text-[18px] font-extrabold">
+              Esta colinha é do {turnoAntigo}º turno
+            </strong>
+            Confira os números antes de votar no {ELEICAO.turno}º turno. Ao
+            salvar de novo, ela passa a valer para o {ELEICAO.turno}º turno.
+          </div>
+        )}
 
         <form.Field name="uf">
           {(field) => (

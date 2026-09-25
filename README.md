@@ -141,6 +141,34 @@ scripts/
 - **Sem backend.** Dados públicos, iguais para todos e que só mudam quando o TSE atualiza não precisam de servidor.
 - **Acessibilidade primeiro.** Paleta desenhada para contraste ≥ 4,5:1 nos dois temas, `prefers-reduced-motion` respeitado e rótulos para leitores de tela em cada casa de dígito.
 
+## Votely Live (`/live`)
+
+Resultados da apuração em tempo real, com os arquivos oficiais de divulgação do TSE ([docs/tse](docs/tse/README.md)).
+
+```
+navegador ──(TanStack Query, 30 s)──► server functions GET (CDN: s-maxage=30)
+                                        │
+                                        ▼
+                         cache em memória + Upstash Redis (trava)
+                                        │  1 busca por arquivo a cada 30 s
+                                        ▼
+                         resultados.tse.jus.br (EA11 + EA20)
+```
+
+- **O navegador nunca fala com o TSE.** As server functions (`src/lib/live/api.ts`) normalizam os arquivos para um formato enxuto (`src/lib/live/tipos.ts`).
+- **Dentro das regras do TSE:** até 8 req/s por instância (o limite é 100), `ETag`/304, recuo exponencial, pausa de 11 min se vier 403/429 e nenhuma URL montada sem confirmação no `ele-c.json` (404 repetidos bloqueiam o IP).
+- **Se o TSE falhar,** o Live mostra os últimos dados válidos, marcados como desatualizados.
+- **Selos** ("Eleito", "Vai ao 2º turno", "Não eleito", "Suplente") **só quando o TSE informa**; nada é calculado.
+- **Histórico:** snapshots de presidente e governador no Redis, a cada nova versão.
+
+Configuração central em `src/config/election.ts` (turno, datas, banner "A apuração começou"). O ambiente do TSE vem da variável `TSE_AMBIENTE` (`simulado`, padrão, ou `oficial`).
+
+```bash
+bun test                                  # 45 testes com fixtures reais do simulado
+bun run live:smoke                        # contra o TSE de verdade (simulado) e o Redis
+bun run live:carga --url <preview-url>    # teste de carga contra um deploy de preview
+```
+
 ## Versionamento
 
 As versões são geradas pelo [release-please](https://github.com/googleapis/release-please) a partir das mensagens de commit, no padrão [Conventional Commits](https://www.conventionalcommits.org/pt-br/):

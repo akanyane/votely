@@ -1,4 +1,6 @@
 /// <reference types="vite/client" />
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import {
   createRootRoute,
   HeadContent,
@@ -7,7 +9,7 @@ import {
   Scripts,
 } from '@tanstack/react-router'
 import { Analytics } from '@vercel/analytics/react'
-import type { ReactNode } from 'react'
+import { type ReactNode, useState } from 'react'
 import { Toaster } from '@/components/ui/sonner'
 import { temaInicialScript } from '@/lib/tema'
 import stylesCss from '../styles.css?url'
@@ -81,9 +83,19 @@ export const Route = createRootRoute({
       { type: 'application/ld+json', children: JSON.stringify(JSON_LD) },
     ],
   }),
-  component: Outlet,
+  component: RootComponent,
   shellComponent: RootDocument,
 })
+
+function RootComponent() {
+  // Um cliente por visitante (no servidor, um por requisição)
+  const [queryClient] = useState(() => new QueryClient())
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Outlet />
+    </QueryClientProvider>
+  )
+}
 
 function RootDocument({ children }: { children: ReactNode }) {
   return (

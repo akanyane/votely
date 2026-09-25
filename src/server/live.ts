@@ -21,10 +21,11 @@ export type EstadoLive<T> =
 export async function resultadoLive(
   cargo: CargoLive,
   abrangencia: UF | 'br',
+  turno: 1 | 2 = ELEICAO.turno,
 ): Promise<EstadoLive<ResultadoCargo>> {
   try {
     const { dados: eleicoes } = await obterEleicoes()
-    const alvo = resolverAlvo(eleicoes, cargo, abrangencia, ELEICAO.turno)
+    const alvo = resolverAlvo(eleicoes, cargo, abrangencia, turno)
     if (alvo.tipo !== 'arquivo') return { estado: alvo.tipo }
     const r = await obterResultadoArquivo(
       alvo.url,

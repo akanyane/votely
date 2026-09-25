@@ -34,6 +34,16 @@
   --color-warn-border: var(--warn-border);
   --color-danger: var(--danger);
   --color-danger-border: var(--danger-border);
+  /* Votely Live: trilhos e cores por POSIÇÃO no ranking (nunca por partido) */
+  --color-track: var(--track);
+  --color-r1: var(--r1);
+  --color-r1-foreground: var(--r1-fg);
+  --color-r2: var(--r2);
+  --color-r2-foreground: var(--r2-fg);
+  --color-r3: var(--r3);
+  --color-r3-foreground: var(--r3-fg);
+  --color-r4: var(--r4);
+  --color-r5: var(--r5);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -76,6 +86,15 @@
   --warn-border: #e3bd68;
   --danger: #fbecea;
   --danger-border: #e5b0aa;
+  --track: #e3eaeb;
+  --r1: #155e66;
+  --r1-fg: #ffffff;
+  --r2: #86a3a7;
+  --r2-fg: #0e1b1e;
+  --r3: #d3e0e2;
+  --r3-fg: #0e1b1e;
+  --r4: #4a5a5e;
+  --r5: #b3bfc1;
   color-scheme: light;
 }
 
@@ -105,6 +124,15 @@
   --warn-border: #6a5320;
   --danger: #341918;
   --danger-border: #6e302c;
+  --track: #1c2c2f;
+  --r1: #6cc4cc;
+  --r1-fg: #04262a;
+  --r2: #3f7278;
+  --r2-fg: #ecf2f3;
+  --r3: #2a4549;
+  --r3-fg: #ecf2f3;
+  --r4: #8fa2a6;
+  --r5: #4f6266;
   color-scheme: dark;
 }
 
@@ -123,6 +151,32 @@
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;
+  }
+}
+
+/* Ponto "ao vivo" do status da apuração */
+@keyframes vlive {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--primary) 45%, transparent);
+  }
+  70% {
+    box-shadow: 0 0 0 8px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+/* Ponto "ao vivo" do status da apuração */
+@keyframes vlive {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--primary) 45%, transparent);
+  }
+  70% {
+    box-shadow: 0 0 0 8px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
   }
 }
 
