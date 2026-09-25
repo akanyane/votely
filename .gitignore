@@ -28,11 +28,11 @@ dist-ssr
 .vercel
 .tanstack
 
-# Fotos dos candidatos: ~21 mil arquivos gerados por `bun run fotos`
-# (zips baixados do TSE ficam em .cache)
-public/fotos
+# Zips de fotos baixados do TSE por `bun run fotos` (as fotos
+# convertidas em public/fotos são versionadas)
 .cache
 
 # Metadados do Windows e arquivos de handoff de design
 *:Zone.Identifier
 Votely - Colinha digital.zip
+.env*
