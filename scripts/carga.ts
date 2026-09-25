@@ -23,6 +23,10 @@ if (!base) {
 }
 const usuarios = Number(arg('usuarios', '30'))
 const segundos = Number(arg('segundos', '60'))
+// Previews são protegidos pela autenticação da Vercel. O token OIDC de
+// desenvolvimento (curta duração, baixado pelo `vercel link`/`vercel env pull`
+// para o .env.local) dá acesso aos previews do próprio projeto.
+const oidc = process.env.VERCEL_OIDC_TOKEN
 const bypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET
 
 // Entrada no formato seroval, igual ao que o navegador envia (GET ?payload=)
@@ -89,6 +93,7 @@ async function usuario() {
           referer: `${base}/live`,
           accept:
             'application/x-tss-framed, application/x-ndjson, application/json',
+          ...(oidc ? { 'x-vercel-trusted-oidc-idp-token': oidc } : {}),
           ...(bypass ? { 'x-vercel-protection-bypass': bypass } : {}),
         },
       })
