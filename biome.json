@@ -45,9 +45,7 @@
   },
   "overrides": [
     {
-      "includes": [
-        "src/components/ui/**"
-      ],
+      "includes": ["src/components/ui/**"],
       "linter": {
         "rules": {
           "a11y": {
@@ -58,9 +56,7 @@
       }
     },
     {
-      "includes": [
-        "src/styles.css"
-      ],
+      "includes": ["src/styles.css"],
       "linter": {
         "rules": {
           "complexity": {
