@@ -8,7 +8,9 @@
       "!!**/.cache",
       "!!**/.tanstack",
       "!!public/fotos",
-      "!!public/data"
+      "!!public/data",
+      "!!**/.output",
+      "!!**/.vercel"
     ]
   },
   "formatter": {
