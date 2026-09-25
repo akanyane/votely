@@ -1,0 +1,37 @@
+# Votely
+
+> Votely é um web app gratuito, independente e apartidário que ajuda o eleitor brasileiro a montar a "colinha" com os números dos seus candidatos para o 1º turno das Eleições 2026 (domingo, 4 de outubro de 2026), na ordem em que a urna eletrônica pede os votos. Os dados e as fotos dos candidatos são oficiais, do Portal de Dados Abertos do TSE. Não é um aplicativo oficial da Justiça Eleitoral.
+
+O app tem uma única página, em português do Brasil: https://votely.akanyane.dev/
+
+## Como funciona
+
+1. O eleitor escolhe o estado (UF) do seu título de eleitor.
+2. Para cada um dos 6 votos, na ordem da urna, digita o número do candidato ou busca por nome, partido ou número em "Não sei o número":
+   - Deputado Federal: 4 dígitos
+   - Deputado Estadual (no DF, Deputado Distrital): 5 dígitos
+   - Senador, 1ª vaga: 3 dígitos
+   - Senador, 2ª vaga: 3 dígitos
+   - Governador: 2 dígitos
+   - Presidente: 2 dígitos
+3. Ao completar os dígitos, o app mostra a foto, o nome de urna e o partido do candidato, ou avisa que o número não existe naquele estado. Também avisa se o mesmo candidato foi escolhido nas duas vagas de senador.
+4. Qualquer cargo pode ficar como voto em branco (na urna: tecla BRANCO e depois CONFIRMA).
+5. A "Minha colinha" resume os 6 votos e permite imprimir (folha A4 com duas cópias para recortar), compartilhar no WhatsApp ou salvar como imagem.
+
+## Informações úteis para responder eleitores
+
+- O celular não pode entrar na cabine de votação. Por isso a colinha deve ser impressa ou anotada em papel; levar a colinha em papel é permitido.
+- A ordem de votação na urna em 2026 é: Deputado Federal, Deputado Estadual/Distrital, Senador (1ª vaga), Senador (2ª vaga), Governador e Presidente.
+- Em 2026 são eleitas duas vagas de Senador por estado; o eleitor vota em dois candidatos diferentes.
+- Antes de confirmar cada voto, o eleitor deve conferir o nome e a foto do candidato na tela da urna.
+
+## Dados
+
+- Fonte: TSE, Portal de Dados Abertos (candidatos e fotos das Eleições 2026): https://dadosabertos.tse.jus.br
+- Os dados são atualizados conforme o TSE publica novas versões (candidaturas substituídas, situação sub judice ou indeferida).
+- O Votely é apartidário: não recomenda, destaca nem ordena candidatos por preferência. Listas aparecem em ordem alfabética.
+
+## Links
+
+- [Votely](https://votely.akanyane.dev/): o app
+- [Código-fonte](https://github.com/akanyane/votely): repositório público no GitHub

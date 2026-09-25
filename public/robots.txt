@@ -1,0 +1,11 @@
+# Votely: colinha digital para as Eleições 2026
+# Todos os robôs (buscadores e IAs) podem indexar a página.
+# /data e /fotos são arquivos internos do app (JSON e ~21 mil fotos do TSE)
+# e não têm valor como resultado de busca.
+
+User-agent: *
+Allow: /
+Disallow: /data/
+Disallow: /fotos/
+
+Sitemap: https://votely.akanyane.dev/sitemap.xml
