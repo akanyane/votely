@@ -13,6 +13,8 @@ const ufSchema = z.enum(UFS.map(([uf]) => uf) as [string, ...string[]])
 const entradaCargo = z.object({
   cargo: z.enum(['pres', 'gov', 'sen', 'depfed', 'depest']),
   uf: ufSchema.optional(),
+  /** Padrão: turno atual (src/config/election.ts) */
+  turno: z.union([z.literal(1), z.literal(2)]).optional(),
 })
 
 /**
@@ -35,7 +37,7 @@ export const buscarResultado = createServerFn({ method: 'GET' })
     // Presidente sem UF = Brasil; demais cargos exigem UF
     const abrangencia = data.cargo === 'pres' && !data.uf ? 'br' : data.uf
     if (!abrangencia) throw new Error('UF obrigatória para este cargo')
-    const r = await resultadoLive(data.cargo, abrangencia as never)
+    const r = await resultadoLive(data.cargo, abrangencia as never, data.turno)
     cacheavel(r.estado === 'ok' && !r.desatualizado)
     return r
   })

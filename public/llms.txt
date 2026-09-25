@@ -18,6 +18,10 @@ O app tem uma única página, em português do Brasil: https://votely.akanyane.d
 4. Qualquer cargo pode ficar como voto em branco (na urna: tecla BRANCO e depois CONFIRMA).
 5. A "Minha colinha" resume os 6 votos e permite imprimir (folha A4 com duas cópias para recortar), compartilhar no WhatsApp ou salvar como imagem.
 
+## Votely Live (resultados)
+
+Em https://votely.akanyane.dev/live o Votely mostra a apuração em tempo real, com os arquivos oficiais de divulgação do TSE: presidente (com o mais votado em cada estado), governador, senado (2 vagas) e deputados (cadeiras por partido ou federação e os eleitos). Atualiza a cada 30 segundos, sempre indicando o % de seções apuradas e o horário. Os selos "Eleito", "Vai ao 2º turno", "Não eleito" e "Suplente" só aparecem quando o próprio TSE informa essa situação. A votação para presidente só é divulgada a partir das 17h de Brasília.
+
 ## Informações úteis para responder eleitores
 
 - O celular não pode entrar na cabine de votação. Por isso a colinha deve ser impressa ou anotada em papel; levar a colinha em papel é permitido.
@@ -29,9 +33,10 @@ O app tem uma única página, em português do Brasil: https://votely.akanyane.d
 
 - Fonte: TSE, Portal de Dados Abertos (candidatos e fotos das Eleições 2026): https://dadosabertos.tse.jus.br
 - Os dados são atualizados conforme o TSE publica novas versões (candidaturas substituídas, situação sub judice ou indeferida).
-- O Votely é apartidário: não recomenda, destaca nem ordena candidatos por preferência. Listas aparecem em ordem alfabética.
+- O Votely é apartidário: não recomenda nem destaca candidatos. Na colinha, as listas aparecem em ordem alfabética; no Live, por número de votos, sem cores de partido.
 
 ## Links
 
-- [Votely](https://votely.akanyane.dev/): o app
+- [Votely](https://votely.akanyane.dev/): a colinha
+- [Votely Live](https://votely.akanyane.dev/live): resultados em tempo real
 - [Código-fonte](https://github.com/akanyane/votely): repositório público no GitHub
