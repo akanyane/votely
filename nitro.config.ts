@@ -3,6 +3,10 @@ import { defineConfig } from 'nitro'
 const DIA = 60 * 60 * 24
 
 export default defineConfig({
+  vercel: {
+    // Funções em São Paulo: perto do TSE e do Upstash Redis (gru1)
+    functions: { regions: ['gru1'] },
+  },
   routeRules: {
     // Fotos do TSE: nome fixo por SQ_CANDIDATO e quase nunca mudam
     '/fotos/**': {

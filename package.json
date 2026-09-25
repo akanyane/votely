@@ -10,7 +10,9 @@
     "preview": "vite preview",
     "fotos": "bun scripts/fotos.ts",
     "candidatos": "bun scripts/candidatos.ts",
-    "format": "biome check --write ."
+    "format": "biome check --write .",
+    "live:smoke": "bun scripts/live-smoke.ts",
+    "test": "bun test"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",

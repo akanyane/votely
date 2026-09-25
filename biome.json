@@ -4,6 +4,7 @@
     "includes": [
       "**",
       "!src/routeTree.gen.ts",
+      "!tests/fixtures",
       "!.release-please-manifest.json",
       "!!**/dist",
       "!!**/.cache",
