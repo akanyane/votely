@@ -6,6 +6,7 @@ import {
   ScriptOnce,
   Scripts,
 } from '@tanstack/react-router'
+import { Analytics } from '@vercel/analytics/react'
 import type { ReactNode } from 'react'
 import { Toaster } from '@/components/ui/sonner'
 import { temaInicialScript } from '@/lib/tema'
@@ -95,6 +96,7 @@ function RootDocument({ children }: { children: ReactNode }) {
       <body>
         {children}
         <Toaster />
+        <Analytics />
         <Scripts />
       </body>
     </html>
