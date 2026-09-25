@@ -4,6 +4,7 @@
     "includes": [
       "**",
       "!src/routeTree.gen.ts",
+      "!.release-please-manifest.json",
       "!!**/dist",
       "!!**/.cache",
       "!!**/.tanstack",
@@ -44,7 +45,9 @@
   },
   "overrides": [
     {
-      "includes": ["src/components/ui/**"],
+      "includes": [
+        "src/components/ui/**"
+      ],
       "linter": {
         "rules": {
           "a11y": {
@@ -55,7 +58,9 @@
       }
     },
     {
-      "includes": ["src/styles.css"],
+      "includes": [
+        "src/styles.css"
+      ],
       "linter": {
         "rules": {
           "complexity": {
