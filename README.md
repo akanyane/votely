@@ -141,6 +141,19 @@ scripts/
 - **Sem backend.** Dados públicos, iguais para todos e que só mudam quando o TSE atualiza não precisam de servidor.
 - **Acessibilidade primeiro.** Paleta desenhada para contraste ≥ 4,5:1 nos dois temas, `prefers-reduced-motion` respeitado e rótulos para leitores de tela em cada casa de dígito.
 
+## Versionamento
+
+As versões são geradas pelo [release-please](https://github.com/googleapis/release-please) a partir das mensagens de commit, no padrão [Conventional Commits](https://www.conventionalcommits.org/pt-br/):
+
+| Commit | Exemplo | Versão |
+|---|---|---|
+| `fix:` | `fix: corrige busca com acento` | patch (1.0.**1**) |
+| `feat:` | `feat: adiciona segundo turno` | minor (1.**1**.0) |
+| `feat!:` ou `BREAKING CHANGE:` | `feat!: novo formato dos dados` | major (**2**.0.0) |
+| `docs:`, `chore:`, `ci:`, `refactor:`… | `docs: atualiza README` | não gera versão sozinho |
+
+A cada push na `main`, o workflow `.github/workflows/release-please.yml` abre (ou atualiza) um PR de release com o `CHANGELOG.md` e a nova versão no `package.json`. Ao fazer merge desse PR, a tag `vX.Y.Z` e a release no GitHub são criadas.
+
 ## Deploy
 
 Qualquer hospedagem que rode TanStack Start serve. Duas dicas:
