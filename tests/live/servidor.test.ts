@@ -10,7 +10,7 @@ import {
 import { _limparCache, obterComCache } from '@/server/cache'
 import { resultadoLive } from '@/server/live'
 import { _definirRedis } from '@/server/redis'
-import { resolverAlvo } from '@/server/tse/eleicoes'
+import { resolverAcompanhamento, resolverAlvo } from '@/server/tse/eleicoes'
 import { _reiniciarHttp, buscarTse, ErroTse } from '@/server/tse/http'
 import { configEleicoesSchema } from '@/server/tse/schemas'
 import { lerFixture, parcial, textoFixture } from '../fixtures/tse/cenarios'
@@ -55,6 +55,7 @@ describe('URLs montadas só a partir do config', () => {
     ciclo: 'ele2026',
     simulado: true,
     dirResultado: '<base>/<ambiente>/<ciclo>/<cd_eleicao>/dados/<uf>',
+    dirAcompanhamento: '<base>/<ambiente>/<ciclo>/<cd_eleicao>/dados/<uf>',
     federal: {
       1: { cd: '21270', abr: [{ cd: 'br', cargos: ['1'] }] },
       2: null,
@@ -100,6 +101,29 @@ describe('URLs montadas só a partir do config', () => {
   })
   test('config sem eleições gerais: aguardando, sem montar URL', () => {
     expect(resolverAlvo(null, 'pres', 'br', 1).tipo).toBe('aguardando')
+  })
+  // URLs conferidas no simulado em 28/09/2026 (responderam 200)
+  test('resultado de um município', () => {
+    expect(resolverAlvo(eleicoes, 'gov', 'SP', 1, '71072')).toMatchObject({
+      url: 'https://resultados-sim.tse.jus.br/simulado/simulado2026/ele2026/21272/dados/sp/sp71072-c0003-e021272-u.json',
+      chave: 'simulado:sp71072-c0003-e021272-u.json',
+    })
+    const pres = resolverAlvo(eleicoes, 'pres', 'SP', 1, '71072')
+    expect(pres.tipo === 'arquivo' && pres.url).toEndWith(
+      '/21270/dados/sp/sp71072-c0001-e021270-u.json',
+    )
+  })
+  test('acompanhamento por município (EA15)', () => {
+    expect(resolverAcompanhamento(eleicoes, 'SP', 1)).toMatchObject({
+      url: 'https://resultados-sim.tse.jus.br/simulado/simulado2026/ele2026/21272/dados/sp/sp-e021272-ab.json',
+    })
+    // 2º turno: só UFs listadas; config sem a pasta: não monta URL
+    expect(resolverAcompanhamento(eleicoes, 'SP', 2).tipo).toBe('arquivo')
+    expect(resolverAcompanhamento(eleicoes, 'RJ', 2).tipo).toBe('aguardando')
+    expect(
+      resolverAcompanhamento({ ...eleicoes, dirAcompanhamento: null }, 'SP', 1)
+        .tipo,
+    ).toBe('aguardando')
   })
 })
 

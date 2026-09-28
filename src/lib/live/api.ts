@@ -7,6 +7,7 @@ import { setResponseHeaders } from '@tanstack/react-start/server'
 import { z } from 'zod'
 import { UFS } from '@/lib/votely'
 import { historicoLive, mapaPresidente, resultadoLive } from '@/server/live'
+import { apuracaoMunicipios, resultadoMunicipio } from '@/server/municipios'
 
 const ufSchema = z.enum(UFS.map(([uf]) => uf) as [string, ...string[]])
 
@@ -57,5 +58,31 @@ export const buscarHistorico = createServerFn({ method: 'GET' })
     if (!abrangencia) return []
     const r = await historicoLive(data.cargo, abrangencia as never)
     cacheavel(true)
+    return r
+  })
+
+export const buscarApuracaoMunicipios = createServerFn({ method: 'GET' })
+  .validator(z.object({ uf: ufSchema }))
+  .handler(async ({ data }) => {
+    const r = await apuracaoMunicipios(data.uf as never)
+    cacheavel(r.estado === 'ok' && !r.desatualizado)
+    return r
+  })
+
+export const buscarResultadoMunicipio = createServerFn({ method: 'GET' })
+  .validator(
+    entradaCargo.extend({
+      uf: ufSchema,
+      municipio: z.string().regex(/^\d{5}$/),
+    }),
+  )
+  .handler(async ({ data }) => {
+    const r = await resultadoMunicipio(
+      data.cargo,
+      data.uf as never,
+      data.municipio,
+      data.turno,
+    )
+    cacheavel(r.estado === 'ok' && !r.desatualizado)
     return r
   })

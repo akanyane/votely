@@ -84,3 +84,30 @@ export type Resposta<T> = {
   /** A última tentativa de atualizar falhou; estes são os últimos dados válidos */
   desatualizado: boolean
 }
+
+/**
+ * public/municipios/{UF}.json (scripts/municipios.ts): contorno de cada
+ * município já como caminho SVG. [código TSE, nome, capital (1/0), caminho]
+ */
+export type MunicipiosUf = {
+  largura: number
+  altura: number
+  municipios: [string, string, 0 | 1, string][]
+}
+
+/** % de seções apuradas de cada município de uma UF (EA15) */
+export type ApuracaoMunicipios = {
+  uf: UF
+  geradoEm: string
+  /** código TSE do município → % de seções totalizadas (0–100) */
+  pct: Record<string, number>
+}
+
+/** Resultado de um cargo num município, só com o que o mapa mostra */
+export type ResultadoMunicipio = {
+  municipio: string
+  pctSecoes: number
+  votacaoLiberada: boolean
+  totalizadoEm: string | null
+  candidatos: Pick<CandidatoLive, 'sq' | 'nome' | 'partido' | 'votos' | 'pct'>[]
+}

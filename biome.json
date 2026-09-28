@@ -11,6 +11,7 @@
       "!!**/.tanstack",
       "!!public/fotos",
       "!!public/data",
+      "!!public/municipios",
       "!!**/.output",
       "!!**/.vercel"
     ]

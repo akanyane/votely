@@ -40,7 +40,7 @@ const emAndamento = new Map<string, Promise<Resultado<unknown>>>()
  * Versão do formato guardado. Suba sempre que ResultadoCargo ou a
  * normalização mudarem: dados antigos no Redis passam a ser ignorados.
  */
-const FORMATO = 2
+const FORMATO = 3
 const PREFIXO = `votely:tse:v${FORMATO}:`
 const TRAVA_MS = 15_000
 const GUARDAR_REDIS_S = 7 * 24 * 3600
