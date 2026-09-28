@@ -123,17 +123,19 @@ function Live() {
   const presOk = pres.data?.estado === 'ok' ? pres.data.dados : null
   const atualOk = atual.data?.estado === 'ok' ? atual.data : null
   const cabecalhoDados = atualOk?.dados ?? presOk
+  const naoIniciado = (r: typeof presOk) =>
+    !!r && r.andamento === 'nao_iniciada' && r.secoes.pct === 0 && !r.final
+  // Presidente só é liberado às 17h; se o cargo escolhido já tem dados,
+  // mostra os resultados em vez da tela de espera.
+  const atualComDados = !!atualOk && !naoIniciado(atualOk.dados)
 
   // ---------- fases da página ----------
   let conteudo: React.ReactNode
   if (!pres.data && pres.isPending) {
     conteudo = <Carregando />
   } else if (
-    pres.data?.estado === 'aguardando' ||
-    (presOk &&
-      presOk.andamento === 'nao_iniciada' &&
-      presOk.secoes.pct === 0 &&
-      !presOk.final)
+    !atualComDados &&
+    (pres.data?.estado === 'aguardando' || naoIniciado(presOk))
   ) {
     conteudo = <AntesDaApuracao />
   } else if (!cabecalhoDados) {
