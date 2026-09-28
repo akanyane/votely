@@ -19,6 +19,7 @@ import {
   NotaFinal,
   SemSegundoTurno,
 } from '@/components/live/Majoritarios'
+import { MapaMunicipios } from '@/components/live/MapaMunicipios'
 import { MapaPresidente } from '@/components/live/MapaPresidente'
 import { Cartao } from '@/components/live/partes'
 import { type AbaLive, SeusCandidatos } from '@/components/live/SeusCandidatos'
@@ -341,6 +342,16 @@ function ConteudoAba({
           : `Deputados · ${ufNome}`
 
   const r = d?.estado === 'ok' ? d.dados : null
+  const ufCidades = aba === 'pres' ? mapaUf : uf
+  const cargoCidades: CargoLive =
+    aba === 'dep' ? (dep === 'fed' ? 'depfed' : 'depest') : aba
+  const nomeCargoCidades = {
+    pres: 'Presidente',
+    gov: 'Governador',
+    sen: 'Senado',
+    depfed: 'Deputado federal',
+    depest: uf === 'DF' ? 'Deputado distrital' : 'Deputado estadual',
+  }[cargoCidades]
   const subtitulo =
     aba === 'dep'
       ? 'Eleição proporcional'
@@ -444,6 +455,16 @@ function ConteudoAba({
             />
           )}
         </>
+      )}
+
+      {r && (
+        // Na aba de presidente, acompanha o estado escolhido no mapa do Brasil
+        <MapaMunicipios
+          key={ufCidades}
+          uf={ufCidades}
+          cargo={cargoCidades}
+          nomeCargo={nomeCargoCidades}
+        />
       )}
     </>
   )

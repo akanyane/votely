@@ -1,8 +1,14 @@
 import { queryOptions } from '@tanstack/react-query'
 import { ELEICAO } from '@/config/election'
 import type { UF } from '@/lib/votely'
-import { buscarHistorico, buscarMapa, buscarResultado } from './api'
-import type { CargoLive } from './tipos'
+import {
+  buscarApuracaoMunicipios,
+  buscarHistorico,
+  buscarMapa,
+  buscarResultado,
+  buscarResultadoMunicipio,
+} from './api'
+import type { CargoLive, MunicipiosUf } from './tipos'
 
 /**
  * A cada 30 s; o TanStack Query pausa o intervalo com a aba oculta e
@@ -57,4 +63,41 @@ export const historicoQuery = (cargo: CargoLive, uf: UF | null) =>
         data: { cargo, uf: cargo === 'pres' ? undefined : (uf ?? undefined) },
       }),
     ...vivo,
+  })
+
+/** Contorno dos municípios (arquivo estático, não muda durante a apuração) */
+export const malhaQuery = (uf: UF) =>
+  queryOptions({
+    queryKey: ['municipios', 'malha', uf],
+    queryFn: async (): Promise<MunicipiosUf> => {
+      const r = await fetch(`/municipios/${uf}.json`)
+      if (!r.ok) throw new Error(`malha ${uf}: ${r.status}`)
+      return r.json()
+    },
+    staleTime: Number.POSITIVE_INFINITY,
+    gcTime: 30 * 60_000,
+  })
+
+export const apuracaoMunicipiosQuery = (uf: UF) =>
+  queryOptions({
+    queryKey: ['live', 'municipios', ELEICAO.turno, uf],
+    queryFn: () => buscarApuracaoMunicipios({ data: { uf } }),
+    ...vivo,
+  })
+
+export const resultadoMunicipioQuery = (
+  cargo: CargoLive,
+  uf: UF,
+  municipio: string | null,
+) =>
+  queryOptions({
+    queryKey: ['live', 'municipio', ELEICAO.turno, cargo, uf, municipio],
+    queryFn: () =>
+      buscarResultadoMunicipio({
+        data: { cargo, uf, municipio: municipio ?? '' },
+      }),
+    enabled: !!municipio,
+    ...vivo,
+    // Trocar de cidade não deve mostrar a anterior
+    placeholderData: undefined,
   })

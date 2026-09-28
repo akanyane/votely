@@ -124,3 +124,12 @@ export const resultadoSchema = z.object({
 })
 
 export type ResultadoRaw = z.infer<typeof resultadoSchema>
+
+// ---------- EA15: acompanhamento da UF (% apurado por município) ----------
+
+export const acompanhamentoSchema = z.object({
+  dg: txtOpt,
+  hg: txtOpt,
+  idg: txtOpt,
+  abr: z.array(z.object({ tpabr: txtOpt, cdabr: txt, s: contagem })),
+})

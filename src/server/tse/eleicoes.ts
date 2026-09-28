@@ -37,6 +37,8 @@ export type EleicoesGerais = {
   ciclo: string
   simulado: boolean
   dirResultado: string
+  /** Pasta dos arquivos de acompanhamento por UF (EA15), se o config tiver */
+  dirAcompanhamento: string | null
   federal: Record<1 | 2, Eleicao | null>
   estadual: Record<1 | 2, Eleicao | null>
 }
@@ -73,6 +75,7 @@ function extrairEleicoesGerais(cfg: ConfigEleicoes): EleicoesGerais | null {
       ciclo,
       simulado: cfg.f === 's',
       dirResultado,
+      dirAcompanhamento: cfg.arq.find((a) => a.tp === 'ab')?.dir ?? null,
       federal: { 1: porCodigo(t1Fed.cd), 2: porCodigo(t1Fed.cdt2) },
       estadual: { 1: porCodigo(t1Est.cd), 2: porCodigo(t1Est.cdt2) },
     }
@@ -108,12 +111,17 @@ export type Alvo =
   | { tipo: 'aguardando' }
   | { tipo: 'sem_segundo_turno' }
 
-/** Resolve qual arquivo EA20 corresponde a cargo + abrangência + turno */
+/**
+ * Resolve qual arquivo EA20 corresponde a cargo + abrangência + turno.
+ * Com `municipio` (código TSE de 5 dígitos, já confirmado pelo EA15 da UF),
+ * aponta para o resultado daquele município.
+ */
 export function resolverAlvo(
   el: EleicoesGerais | null,
   cargo: CargoLive,
   abrangencia: UF | 'br',
   turno: 1 | 2,
+  municipio?: string,
 ): Alvo {
   if (!el) return { tipo: 'aguardando' }
   if (turno === 2 && cargo !== 'pres' && cargo !== 'gov') {
@@ -136,7 +144,7 @@ export function resolverAlvo(
 
   const amb = ambienteTse()
   const cd6 = eleicao.cd.padStart(6, '0')
-  const arquivo = `${uf}-c${cod.padStart(4, '0')}-e${cd6}-u.json`
+  const arquivo = `${uf}${municipio ?? ''}-c${cod.padStart(4, '0')}-e${cd6}-u.json`
   const url = urlDoPadrao(
     el.dirResultado,
     {
@@ -151,32 +159,63 @@ export function resolverAlvo(
   return { tipo: 'arquivo', url, chave: `${amb.nome}:${arquivo}` }
 }
 
+/**
+ * Arquivo de acompanhamento da UF (EA15: <uf>-e<ELEICAO>-ab.json), com o %
+ * apurado de cada município. Usa a eleição estadual, que tem a UF como
+ * abrangência; no 2º turno, só nas UFs que o config lista.
+ */
+export function resolverAcompanhamento(
+  el: EleicoesGerais | null,
+  uf: UF,
+  turno: 1 | 2,
+): Alvo {
+  const eleicao = el?.estadual[turno]
+  if (!el?.dirAcompanhamento || !eleicao) return { tipo: 'aguardando' }
+  const sigla = uf.toLowerCase()
+  const cobre = eleicao.abr.some(
+    (a) => a.cd === sigla || (turno === 1 && a.cd === 'br'),
+  )
+  if (!cobre) return { tipo: 'aguardando' }
+
+  const amb = ambienteTse()
+  const arquivo = `${sigla}-e${eleicao.cd.padStart(6, '0')}-ab.json`
+  const url = urlDoPadrao(
+    el.dirAcompanhamento,
+    {
+      base: amb.base,
+      ambiente: amb.ambiente,
+      ciclo: el.ciclo,
+      cd_eleicao: eleicao.cd,
+      uf: sigla,
+    },
+    arquivo,
+  )
+  return { tipo: 'arquivo', url, chave: `${amb.nome}:${arquivo}` }
+}
+
 export async function obterResultadoArquivo(
   url: string,
   chave: string,
   cargo: CargoLive,
   aoAtualizar?: (novo: ResultadoCargo) => Promise<void>,
+  ttlMs = TTL_RESULTADO_MS,
 ): Promise<Resultado<ResultadoCargo>> {
-  return obterComCache<ResultadoCargo>(
-    chave,
-    TTL_RESULTADO_MS,
-    async (anterior) => {
-      const r = await buscarTse(url, anterior?.etag)
-      if (r.tipo === 'nao_modificado') return 'nao_modificado'
-      let json: unknown
-      try {
-        json = JSON.parse(r.corpo)
-      } catch {
-        throw new ErroTse(`JSON inválido em ${chave}`)
-      }
-      const raw = resultadoSchema.safeParse(json)
-      if (!raw.success) throw new ErroTse(`arquivo fora do formato em ${chave}`)
-      const dados = normalizarResultado(raw.data, cargo)
-      const versao = versaoDoArquivo(raw.data)
-      if (aoAtualizar && (!anterior || versao > anterior.versao)) {
-        await aoAtualizar(dados).catch((e) => console.error('[historico]', e))
-      }
-      return { dados, versao, etag: r.etag }
-    },
-  )
+  return obterComCache<ResultadoCargo>(chave, ttlMs, async (anterior) => {
+    const r = await buscarTse(url, anterior?.etag)
+    if (r.tipo === 'nao_modificado') return 'nao_modificado'
+    let json: unknown
+    try {
+      json = JSON.parse(r.corpo)
+    } catch {
+      throw new ErroTse(`JSON inválido em ${chave}`)
+    }
+    const raw = resultadoSchema.safeParse(json)
+    if (!raw.success) throw new ErroTse(`arquivo fora do formato em ${chave}`)
+    const dados = normalizarResultado(raw.data, cargo)
+    const versao = versaoDoArquivo(raw.data)
+    if (aoAtualizar && (!anterior || versao > anterior.versao)) {
+      await aoAtualizar(dados).catch((e) => console.error('[historico]', e))
+    }
+    return { dados, versao, etag: r.etag }
+  })
 }

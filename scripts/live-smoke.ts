@@ -16,6 +16,7 @@ import {
   mapaPresidente,
   resultadoLive,
 } from '../src/server/live'
+import { apuracaoMunicipios } from '../src/server/municipios'
 import { redis } from '../src/server/redis'
 
 const i = process.argv.indexOf('--uf')
@@ -56,6 +57,13 @@ const mapa = await mapaPresidente()
 console.log(
   `\nmapa: ${mapa.estado === 'ok' ? `${mapa.dados.length} UFs` : mapa.estado}`,
 )
+const mun = await apuracaoMunicipios(uf)
+if (mun.estado === 'ok') {
+  const v = Object.values(mun.dados.pct)
+  console.log(
+    `cidades ${uf}: ${v.length} · ${v.filter((p) => p >= 100).length} concluídas · ${v.filter((p) => p > 0).length} com votos`,
+  )
+} else console.log(`cidades ${uf}: ${mun.estado}`)
 console.log(
   `historico pres: ${(await historicoLive('pres', 'br')).length} snapshots`,
 )
