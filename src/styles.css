@@ -95,6 +95,10 @@
   --r3-fg: #0e1b1e;
   --r4: #4a5a5e;
   --r5: #b3bfc1;
+  /* Séries do gráfico de evolução (validadas contra --card nos dois temas) */
+  --serie-1: #2a78d6;
+  --serie-2: #eb6834;
+  --serie-3: #1baf7a;
   color-scheme: light;
 }
 
@@ -133,6 +137,9 @@
   --r3-fg: #ecf2f3;
   --r4: #8fa2a6;
   --r5: #4f6266;
+  --serie-1: #3987e5;
+  --serie-2: #d95926;
+  --serie-3: #199e70;
   color-scheme: dark;
 }
 

@@ -12,6 +12,7 @@ import {
   textoCompartilhar,
 } from '@/components/live/compartilhar'
 import { Deputados } from '@/components/live/Deputados'
+import { GraficoEvolucao } from '@/components/live/GraficoEvolucao'
 import {
   BrancosNulos,
   Confronto,
@@ -446,6 +447,9 @@ function ConteudoAba({
             <ListaCandidatos r={r} />
           )}
           {aba !== 'dep' && <BrancosNulos r={r} />}
+          {(aba === 'pres' || aba === 'gov') && (
+            <GraficoEvolucao r={r} uf={uf} />
+          )}
           {aba === 'pres' && !turno2 && mapa?.estado === 'ok' && presOk && (
             <MapaPresidente
               ufs={mapa.dados}
