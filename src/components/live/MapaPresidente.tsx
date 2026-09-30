@@ -1,4 +1,6 @@
+import { useQuery } from '@tanstack/react-query'
 import { cn } from 'cn'
+import { malhaQuery } from '@/lib/live/consultas'
 import { fmtPct, ordinal } from '@/lib/live/formato'
 import { nomeUf, type UF } from '@/lib/votely'
 import type { UfNoMapa } from '@/server/live'
@@ -42,6 +44,12 @@ const COR = [
   'bg-r3 text-r3-foreground',
 ]
 
+// As mesmas cores, para o SVG (fill não usa as classes bg-*)
+const PREENCHIMENTO = ['var(--r1)', 'var(--r2)', 'var(--r3)']
+const TEXTO = ['var(--r1-fg)', 'var(--r2-fg)', 'var(--r3-fg)']
+/** Estados pequenos demais para a sigla caber dentro do contorno */
+const SEM_SIGLA = new Set<UF>(['DF', 'SE', 'AL', 'PB', 'RN'])
+
 type Props = {
   ufs: UfNoMapa[]
   /** sq na ordem nacional (para colorir pela posição nacional) */
@@ -66,6 +74,7 @@ export function MapaPresidente({
     if (u.top[0] && u.top[0].pct > 0) contagem[posNacional(u.top[0].sq)]++
 
   const sel = porUf.get(selecionada)
+  const malha = useQuery(malhaQuery('BR'))
 
   return (
     <Cartao className="flex flex-col gap-3.5">
@@ -77,33 +86,112 @@ export function MapaPresidente({
           Toque em um estado para ver o resultado dele.
         </p>
       </div>
-      <div className="grid grid-cols-[repeat(7,40px)] auto-rows-[40px] justify-center gap-1 lg:grid-cols-[repeat(7,52px)] lg:auto-rows-[52px]">
-        {(Object.keys(GRADE) as UF[]).map((uf) => {
-          const d = porUf.get(uf)
-          const lider = d?.top[0]
-          const semVotos = !lider || lider.pct === 0
-          const [col, lin] = GRADE[uf]
-          return (
-            <button
-              key={uf}
-              type="button"
-              onClick={() => onSelecionar(uf)}
-              aria-pressed={uf === selecionada}
-              aria-label={`${nomeUf(uf)}: ${semVotos ? 'sem votos apurados' : `mais votado ${lider.nome}`}`}
-              style={{ gridColumn: col, gridRow: lin }}
-              className={cn(
-                'rounded-md text-[14px] font-extrabold outline-offset-2 focus-visible:ring-4 focus-visible:ring-focus-glow',
-                semVotos
-                  ? 'bg-track text-muted-foreground'
-                  : COR[posNacional(lider.sq)],
-                uf === selecionada && 'outline-3 outline-foreground',
-              )}
-            >
-              {uf}
-            </button>
-          )
-        })}
-      </div>
+      {malha.data ? (
+        <svg
+          viewBox={`0 0 ${malha.data.largura} ${malha.data.altura}`}
+          className="mx-auto max-h-[460px] w-full"
+          aria-label="Mapa do Brasil com o mais votado em cada estado"
+        >
+          {malha.data.municipios.map(([sigla, nome, , d]) => {
+            const uf = sigla as UF
+            const lider = porUf.get(uf)?.top[0]
+            const semVotos = !lider || lider.pct === 0
+            const pos = semVotos ? -1 : posNacional(lider.sq)
+            return (
+              // biome-ignore lint/a11y/useSemanticElements: SVG não tem <button>; o contorno do estado é o alvo
+              <g
+                key={uf}
+                role="button"
+                tabIndex={0}
+                aria-pressed={uf === selecionada}
+                aria-label={`${nome}: ${semVotos ? 'sem votos apurados' : `mais votado ${lider.nome}`}`}
+                onClick={() => onSelecionar(uf)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    onSelecionar(uf)
+                  }
+                }}
+                className="cursor-pointer outline-none [&:focus-visible>path]:stroke-foreground [&:focus-visible>path]:stroke-[3px] hover:opacity-85"
+              >
+                <title>{nome}</title>
+                <path
+                  d={d}
+                  fill={pos < 0 ? 'var(--track)' : PREENCHIMENTO[pos]}
+                  className="stroke-card"
+                  strokeWidth={1.5}
+                  vectorEffect="non-scaling-stroke"
+                />
+              </g>
+            )
+          })}
+          {/* Siglas numa camada própria: um estado desenhado depois não as cobre */}
+          {malha.data.municipios.map(([sigla, , , , rotulo]) => {
+            const uf = sigla as UF
+            if (!rotulo || SEM_SIGLA.has(uf)) return null
+            const lider = porUf.get(uf)?.top[0]
+            const pos = !lider || lider.pct === 0 ? -1 : posNacional(lider.sq)
+            return (
+              <text
+                key={uf}
+                x={rotulo[0]}
+                y={rotulo[1]}
+                dy="0.35em"
+                textAnchor="middle"
+                aria-hidden
+                fill={pos < 0 ? 'var(--muted-foreground)' : TEXTO[pos]}
+                className="pointer-events-none text-[30px] font-extrabold"
+              >
+                {uf}
+              </text>
+            )
+          })}
+          {/* Contorno do estado escolhido por cima dos vizinhos */}
+          {malha.data.municipios
+            .filter(([sigla]) => sigla === selecionada)
+            .map(([sigla, , , d]) => (
+              <path
+                key={sigla}
+                d={d}
+                fill="none"
+                className="pointer-events-none stroke-foreground"
+                strokeWidth={3}
+                vectorEffect="non-scaling-stroke"
+              />
+            ))}
+        </svg>
+      ) : malha.isError ? (
+        // Sem o desenho do mapa: a grade antiga, que não depende de arquivo
+        <div className="grid grid-cols-[repeat(7,40px)] auto-rows-[40px] justify-center gap-1 lg:grid-cols-[repeat(7,52px)] lg:auto-rows-[52px]">
+          {(Object.keys(GRADE) as UF[]).map((uf) => {
+            const d = porUf.get(uf)
+            const lider = d?.top[0]
+            const semVotos = !lider || lider.pct === 0
+            const [col, lin] = GRADE[uf]
+            return (
+              <button
+                key={uf}
+                type="button"
+                onClick={() => onSelecionar(uf)}
+                aria-pressed={uf === selecionada}
+                aria-label={`${nomeUf(uf)}: ${semVotos ? 'sem votos apurados' : `mais votado ${lider.nome}`}`}
+                style={{ gridColumn: col, gridRow: lin }}
+                className={cn(
+                  'rounded-md text-[14px] font-extrabold outline-offset-2 focus-visible:ring-4 focus-visible:ring-focus-glow',
+                  semVotos
+                    ? 'bg-track text-muted-foreground'
+                    : COR[posNacional(lider.sq)],
+                  uf === selecionada && 'outline-3 outline-foreground',
+                )}
+              >
+                {uf}
+              </button>
+            )
+          })}
+        </div>
+      ) : (
+        <div className="aspect-square max-h-[460px] w-full" />
+      )}
       <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-[15px]">
         {ordemNacional.slice(0, 3).map((c, i) => (
           <span key={c.sq} className="flex items-center gap-1.5">
