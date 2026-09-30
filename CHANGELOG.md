@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.3.0](https://github.com/akanyane/votely/compare/v1.2.0...v1.3.0) (2026-09-30)
+
+
+### Funcionalidades
+
+* **live:** gráfico da evolução da apuração ([73037e1](https://github.com/akanyane/votely/commit/73037e10b53d25e68473c723f4c760e4861c3aa6))
+* **live:** gráfico da evolução da apuração para presidente e governador ([18100ae](https://github.com/akanyane/votely/commit/18100ae4c6ba0721f8b2107cf625cbb872e2aab2))
+* **live:** mapa das cidades com % apurado e resultado por município ([9e5b720](https://github.com/akanyane/votely/commit/9e5b720eed7584aa7992fc560785ae0eeab9cec4))
+* **live:** mapa das cidades com % apurado e resultado por município ([02e4dab](https://github.com/akanyane/votely/commit/02e4dab1976eaa9877f6320809895b552dcf26df))
+* **live:** mapa do Brasil com o contorno real dos estados ([aaa0274](https://github.com/akanyane/votely/commit/aaa0274a2a51cedcf23cb88294f0e65518663a69))
+* **live:** mapa do Brasil com o contorno real dos estados ([60c4297](https://github.com/akanyane/votely/commit/60c4297b2606af8213032f6b30088898ec8262d0))
+* **live:** números e barras animados a cada atualização ([0907cdc](https://github.com/akanyane/votely/commit/0907cdc08542f6eaccd741f1a3c7eba3b9a9e260))
+* **live:** números e barras animados a cada atualização ([32ee4d7](https://github.com/akanyane/votely/commit/32ee4d7ce54270e1d3b4e2a6114714ad1bcd831a))
+
+
+### Correções
+
+* **live:** mostra resultados do cargo escolhido mesmo com presidente zerado ([a82d712](https://github.com/akanyane/votely/commit/a82d712c5e3e94c792e8f0480e776828f4376d63))
+
 ## [1.2.0](https://github.com/akanyane/votely/compare/v1.1.0...v1.2.0) (2026-09-25)
 
 
