@@ -1,7 +1,8 @@
-import { CheckIcon, InfoIcon } from 'lucide-react'
+import { ArrowDownIcon, ArrowUpIcon, CheckIcon, InfoIcon } from 'lucide-react'
 import { Fragment } from 'react'
 import { Button } from '@/components/ui/button'
 import { CandidatoAvatar } from '@/components/votely/CandidatoAvatar'
+import { useMudancaPosicao, useNumeroAnimado } from '@/lib/live/animacao'
 import { fmtPct, fmtVotos, ordinal } from '@/lib/live/formato'
 import type { CandidatoLive, ResultadoCargo } from '@/lib/live/tipos'
 import { Barra, Cartao, Selo } from './partes'
@@ -19,6 +20,9 @@ function CardCandidato({
   vaga: number | null
   final: boolean
 }) {
+  const pct = useNumeroAnimado(c.pct)
+  const votos = useNumeroAnimado(c.votos)
+  const mudanca = useMudancaPosicao(pos)
   return (
     <article
       className={`flex min-w-0 flex-col gap-2.5 rounded-xl bg-card px-[18px] py-4 ${destaque ? 'border-2 border-primary' : 'border border-border'}`}
@@ -41,12 +45,22 @@ function CardCandidato({
       </div>
       <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
         <span className="text-[34px] leading-[1.05] font-bold tracking-[-0.01em] tabular-nums">
-          {fmtPct(c.pct)}
+          {fmtPct(pct)}
         </span>
         <span className="text-[16px] text-muted-foreground tabular-nums">
-          {fmtVotos(c.votos)}
+          {fmtVotos(Math.round(votos))}
         </span>
       </div>
+      {mudanca && (
+        <span className="-mt-1 flex items-center gap-1 text-[15px] font-bold text-muted-foreground">
+          {mudanca.para < mudanca.de ? (
+            <ArrowUpIcon className="size-4 text-primary" aria-hidden />
+          ) : (
+            <ArrowDownIcon className="size-4" aria-hidden />
+          )}
+          {textoMudanca(mudanca.de, mudanca.para)} na última atualização
+        </span>
+      )}
       <Barra
         valor={c.pct}
         rotulo={`${c.nome}: ${fmtPct(c.pct)} dos votos válidos`}
@@ -63,6 +77,12 @@ function CardCandidato({
       )}
     </article>
   )
+}
+
+function textoMudanca(de: number, para: number) {
+  const n = Math.abs(de - para)
+  const posicoes = n === 1 ? '1 posição' : `${n} posições`
+  return para < de ? `Subiu ${posicoes}` : `Caiu ${posicoes}`
 }
 
 /** Presidente, governador e senado (1º turno) */

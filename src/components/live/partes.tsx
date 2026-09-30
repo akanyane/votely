@@ -68,7 +68,8 @@ export function Barra({
       value={Math.max(0, Math.min(100, valor))}
       aria-label={rotulo}
       className={cn(
-        'gap-0 **:data-[slot=progress-indicator]:rounded-full **:data-[slot=progress-track]:bg-track',
+        // Largura desliza até o novo valor; sem animação com "reduzir movimento"
+        'gap-0 **:data-[slot=progress-indicator]:rounded-full **:data-[slot=progress-indicator]:duration-700 **:data-[slot=progress-indicator]:ease-out motion-reduce:**:data-[slot=progress-indicator]:transition-none **:data-[slot=progress-track]:bg-track',
         alta
           ? '**:data-[slot=progress-track]:h-3'
           : '**:data-[slot=progress-track]:h-2.5',
