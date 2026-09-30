@@ -1,6 +1,7 @@
 /**
  * Gera public/municipios/{UF}.json: o contorno de cada município (malha do
  * IBGE, qualidade mínima) já projetado como caminho SVG, com o código do TSE.
+ * Gera também public/municipios/BR.json, com o contorno de cada estado.
  * A ligação TSE ↔ IBGE vem do próprio TSE (mun-e<ELEICAO>-cm.json, campo cdi).
  *
  * Uso: bun run municipios
@@ -9,7 +10,7 @@
 import { mkdir, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import type { MunicipiosUf } from '../src/lib/live/tipos'
-import { UFS } from '../src/lib/votely'
+import { nomeUf, UFS } from '../src/lib/votely'
 import { ambienteTse, urlConfig, urlDoPadrao } from '../src/server/tse/ambiente'
 import { buscarTse } from '../src/server/tse/http'
 import { configEleicoesSchema } from '../src/server/tse/schemas'
@@ -96,16 +97,40 @@ function projetar(features: Feature[]) {
       })
       .join('')
 
-  return { altura, caminho }
+  /** Centro da caixa do maior anel: onde vai a sigla no mapa do Brasil */
+  const rotulo = (f: Feature): [number, number] => {
+    let melhor: [number, number] = [0, 0]
+    let maior = -1
+    for (const anel of aneis(f)) {
+      const xs = anel.map(([lon]) => (lon - x0) * k * escala)
+      const ys = anel.map(([, lat]) => (y1 - lat) * escala)
+      const [a, b, c, d] = [
+        Math.min(...xs),
+        Math.max(...xs),
+        Math.min(...ys),
+        Math.max(...ys),
+      ]
+      if ((b - a) * (d - c) > maior) {
+        maior = (b - a) * (d - c)
+        melhor = [Math.round((a + b) / 2), Math.round((c + d) / 2)]
+      }
+    }
+    return melhor
+  }
+
+  return { altura, caminho, rotulo }
 }
 
 const cfg = await configMunicipios()
 await mkdir(OUT_DIR, { recursive: true })
+/** Código IBGE da UF (2 dígitos) → sigla, para o mapa do Brasil */
+const siglaPorIbge = new Map<string, string>()
 
 for (const [uf] of UFS) {
   const lista = cfg.abr.find((a) => a.cd === uf.toLowerCase())?.mu ?? []
   if (lista.length === 0) throw new Error(`${uf}: sem municípios no TSE`)
   const codUf = lista[0].cdi.slice(0, 2)
+  siglaPorIbge.set(codUf, uf)
   const features = await malhaIbge(codUf)
   const porIbge = new Map(features.map((f) => [f.properties.codarea, f]))
   const { altura, caminho } = projetar(features)
@@ -133,3 +158,25 @@ for (const [uf] of UFS) {
   // Ritmo educado com o IBGE
   await new Promise((r) => setTimeout(r, 300))
 }
+
+// Brasil: um contorno por estado, com a sigla no lugar do código do TSE
+const r = await fetch(
+  'https://servicodados.ibge.gov.br/api/v3/malhas/paises/BR?intrarregiao=UF&qualidade=minima&formato=application/vnd.geo+json',
+)
+if (!r.ok) throw new Error(`IBGE ${r.status} na malha do Brasil`)
+const estados: Feature[] = (await r.json()).features
+const brasil = projetar(estados)
+const saida: MunicipiosUf = {
+  largura: LARGURA,
+  altura: brasil.altura,
+  municipios: estados.map((f) => {
+    const uf = siglaPorIbge.get(f.properties.codarea)
+    if (!uf) throw new Error(`UF sem sigla: ${f.properties.codarea}`)
+    return [uf, nomeUf(uf), 0, brasil.caminho(f), brasil.rotulo(f)]
+  }),
+}
+const json = JSON.stringify(saida)
+await writeFile(join(OUT_DIR, 'BR.json'), json)
+console.log(
+  `BR: ${saida.municipios.length} estados · ${(json.length / 1024).toFixed(0)} KB`,
+)

@@ -88,11 +88,13 @@ export type Resposta<T> = {
 /**
  * public/municipios/{UF}.json (scripts/municipios.ts): contorno de cada
  * município já como caminho SVG. [código TSE, nome, capital (1/0), caminho]
+ * O BR.json usa o mesmo formato, com um estado por item.
  */
 export type MunicipiosUf = {
   largura: number
   altura: number
-  municipios: [string, string, 0 | 1, string][]
+  /** No BR.json: [sigla, nome, 0, caminho, posição da sigla] */
+  municipios: [string, string, 0 | 1, string, [number, number]?][]
 }
 
 /** % de seções apuradas de cada município de uma UF (EA15) */

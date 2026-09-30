@@ -66,7 +66,7 @@ export const historicoQuery = (cargo: CargoLive, uf: UF | null) =>
   })
 
 /** Contorno dos municípios (arquivo estático, não muda durante a apuração) */
-export const malhaQuery = (uf: UF) =>
+export const malhaQuery = (uf: UF | 'BR') =>
   queryOptions({
     queryKey: ['municipios', 'malha', uf],
     queryFn: async (): Promise<MunicipiosUf> => {
