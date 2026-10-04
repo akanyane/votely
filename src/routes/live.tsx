@@ -22,6 +22,7 @@ import {
 } from '@/components/live/Majoritarios'
 import { MapaMunicipios } from '@/components/live/MapaMunicipios'
 import { MapaPresidente } from '@/components/live/MapaPresidente'
+import { Partidos } from '@/components/live/Partidos'
 import { Cartao } from '@/components/live/partes'
 import { type AbaLive, SeusCandidatos } from '@/components/live/SeusCandidatos'
 import { StatusApuracao } from '@/components/live/StatusApuracao'
@@ -42,7 +43,10 @@ import { isUf, nomeUf, type UF, UFS } from '@/lib/votely'
 import type { EstadoLive, UfNoMapa } from '@/server/live'
 
 const busca = z.object({
-  aba: z.enum(['pres', 'gov', 'sen', 'dep']).optional().catch(undefined),
+  aba: z
+    .enum(['pres', 'gov', 'sen', 'dep', 'partidos'])
+    .optional()
+    .catch(undefined),
   uf: z
     .string()
     .optional()
@@ -74,11 +78,15 @@ export const Route = createFileRoute('/live')({
   component: Live,
 })
 
-const ABAS: { id: AbaLive; rotulo: string }[] = [
+/** Abas de cargo (as da colinha) mais a soma nacional por partido */
+type Aba = AbaLive | 'partidos'
+
+const ABAS: { id: Aba; rotulo: string }[] = [
   { id: 'pres', rotulo: 'Presidente' },
   { id: 'gov', rotulo: 'Governador' },
   { id: 'sen', rotulo: 'Senado' },
   { id: 'dep', rotulo: 'Deputados' },
+  { id: 'partidos', rotulo: 'Partidos' },
 ]
 
 const ITENS_UF = UFS.map(([sigla, nome]) => ({
@@ -99,14 +107,19 @@ function Live() {
   const abas = turno2
     ? ABAS.filter((a) => a.id === 'pres' || a.id === 'gov')
     : ABAS
-  const aba: AbaLive = abas.some((a) => a.id === s.aba)
-    ? (s.aba as AbaLive)
-    : 'pres'
+  const aba: Aba = abas.some((a) => a.id === s.aba) ? (s.aba as Aba) : 'pres'
   const dep = s.dep ?? 'fed'
+  // Na aba Partidos, o cabeçalho segue o presidente (mesma consulta)
   const cargo: CargoLive =
-    aba === 'dep' ? (dep === 'fed' ? 'depfed' : 'depest') : aba
+    aba === 'dep'
+      ? dep === 'fed'
+        ? 'depfed'
+        : 'depest'
+      : aba === 'partidos'
+        ? 'pres'
+        : aba
 
-  const ir = (mudanca: { aba?: AbaLive; uf?: UF; dep?: 'fed' | 'est' }) =>
+  const ir = (mudanca: { aba?: Aba; uf?: UF; dep?: 'fed' | 'est' }) =>
     navigate({
       search: (atual) => ({ ...atual, ...mudanca }),
       replace: true,
@@ -220,18 +233,18 @@ function Live() {
           <main className="flex min-w-0 flex-col gap-4 lg:col-start-1 lg:row-start-1">
             <Tabs
               value={aba}
-              onValueChange={(v) => ir({ aba: v as AbaLive })}
+              onValueChange={(v) => ir({ aba: v as Aba })}
               className="gap-4"
             >
               <TabsList
                 aria-label="Cargos"
-                className={`grid h-auto! w-full gap-1.5 rounded-xl bg-track p-1.5 ${turno2 ? 'grid-cols-2' : 'grid-cols-2 lg:grid-cols-4'}`}
+                className={`grid h-auto! w-full gap-1.5 rounded-xl bg-track p-1.5 ${turno2 ? 'grid-cols-2' : 'grid-cols-2 lg:grid-cols-5'}`}
               >
                 {abas.map((a) => (
                   <TabsTrigger
                     key={a.id}
                     value={a.id}
-                    className="h-[52px] rounded-lg text-[17px] font-extrabold text-muted-foreground data-active:bg-card data-active:text-foreground data-active:shadow-[0_1px_3px_rgba(0,0,0,.12)] dark:data-active:border-transparent dark:data-active:bg-card"
+                    className="h-[52px] rounded-lg last:odd:col-span-2 lg:last:odd:col-span-1 text-[17px] font-extrabold text-muted-foreground data-active:bg-card data-active:text-foreground data-active:shadow-[0_1px_3px_rgba(0,0,0,.12)] dark:data-active:border-transparent dark:data-active:bg-card"
                   >
                     {a.rotulo}
                   </TabsTrigger>
@@ -318,7 +331,7 @@ function ConteudoAba({
   gov1,
   onIr,
 }: {
-  aba: AbaLive
+  aba: Aba
   uf: UF
   dep: 'fed' | 'est'
   consulta: UseQueryResult<EstadoLive<ResultadoCargo>>
@@ -327,11 +340,27 @@ function ConteudoAba({
   mapaUf: UF
   onMapaUf: (uf: UF) => void
   gov1: ResultadoCargo | null
-  onIr: (m: { aba?: AbaLive; uf?: UF; dep?: 'fed' | 'est' }) => void
+  onIr: (m: { aba?: Aba; uf?: UF; dep?: 'fed' | 'est' }) => void
 }) {
   const ufNome = nomeUf(uf)
   const turno2 = ELEICAO.turno === 2
   const d = consulta.data
+
+  if (aba === 'partidos') {
+    return (
+      <>
+        <div className="min-w-0">
+          <h2 className="text-[26px] leading-[1.2] font-extrabold">
+            Partidos · Brasil
+          </h2>
+          <div className="text-[16px] text-muted-foreground">
+            Câmara, Senado e governadores somados nos 27 estados
+          </div>
+        </div>
+        <Partidos />
+      </>
+    )
+  }
 
   const titulo =
     aba === 'pres'

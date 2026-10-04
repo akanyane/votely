@@ -3,6 +3,7 @@ import { ELEICAO } from '@/config/election'
 import type { UF } from '@/lib/votely'
 import {
   buscarApuracaoMunicipios,
+  buscarBancadas,
   buscarHistorico,
   buscarMapa,
   buscarResultado,
@@ -47,6 +48,16 @@ export const mapaQuery = () =>
     queryKey: ['live', 'mapa', ELEICAO.turno],
     queryFn: () => buscarMapa(),
     ...vivo,
+  })
+
+/** Soma nacional por partido: muda devagar, então a cada 2 min */
+export const bancadasQuery = () =>
+  queryOptions({
+    queryKey: ['live', 'bancadas', ELEICAO.turno],
+    queryFn: () => buscarBancadas(),
+    ...vivo,
+    refetchInterval: 2 * 60_000,
+    staleTime: 60_000,
   })
 
 export const historicoQuery = (cargo: CargoLive, uf: UF | null) =>
