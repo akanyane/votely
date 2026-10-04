@@ -5,10 +5,11 @@ import {
   buscarApuracaoMunicipios,
   buscarHistorico,
   buscarMapa,
+  buscarMapaCidades,
   buscarResultado,
   buscarResultadoMunicipio,
 } from './api'
-import type { CargoLive, MunicipiosUf } from './tipos'
+import type { CargoLive, MalhaCidades, MunicipiosUf } from './tipos'
 
 /**
  * A cada 30 s; o TanStack Query pausa o intervalo com a aba oculta e
@@ -100,4 +101,26 @@ export const resultadoMunicipioQuery = (
     ...vivo,
     // Trocar de cidade não deve mostrar a anterior
     placeholderData: undefined,
+  })
+
+/** Retrato de todas as cidades (muda a cada ~10 min) */
+export const mapaCidadesQuery = () =>
+  queryOptions({
+    queryKey: ['live', 'mapa-cidades', ELEICAO.turno],
+    queryFn: () => buscarMapaCidades(),
+    ...vivo,
+    refetchInterval: 60_000,
+  })
+
+/** Contorno de todas as cidades do Brasil (estático, ~250 KB comprimido) */
+export const malhaCidadesQuery = () =>
+  queryOptions({
+    queryKey: ['municipios', 'malha', 'BR-cidades'],
+    queryFn: async (): Promise<MalhaCidades> => {
+      const r = await fetch('/municipios/BR-cidades.json')
+      if (!r.ok) throw new Error(`malha BR-cidades: ${r.status}`)
+      return r.json()
+    },
+    staleTime: Number.POSITIVE_INFINITY,
+    gcTime: 30 * 60_000,
   })

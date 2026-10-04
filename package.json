@@ -14,7 +14,9 @@
     "live:smoke": "bun scripts/live-smoke.ts",
     "test": "bun test",
     "live:carga": "bun scripts/carga.ts",
-    "municipios": "bun scripts/municipios.ts"
+    "municipios": "bun scripts/municipios.ts",
+    "mapa:malha": "bun scripts/mapa-cidades-malha.ts",
+    "mapa:cidades": "bun scripts/mapa-cidades.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
