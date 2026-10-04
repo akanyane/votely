@@ -25,7 +25,7 @@ export const ELEICAO = {
   },
 
   /** Banner "A apuração começou" na colinha. */
-  bannerApuracao: false,
+  bannerApuracao: true,
 
   /** Intervalo de atualização no navegador. */
   atualizacaoMs: 30_000,
