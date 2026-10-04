@@ -7,6 +7,7 @@ import { setResponseHeaders } from '@tanstack/react-start/server'
 import { z } from 'zod'
 import { UFS } from '@/lib/votely'
 import { historicoLive, mapaPresidente, resultadoLive } from '@/server/live'
+import { mapaCidades } from '@/server/mapaCidades'
 import { apuracaoMunicipios, resultadoMunicipio } from '@/server/municipios'
 
 const ufSchema = z.enum(UFS.map(([uf]) => uf) as [string, ...string[]])
@@ -86,3 +87,11 @@ export const buscarResultadoMunicipio = createServerFn({ method: 'GET' })
     cacheavel(r.estado === 'ok' && !r.desatualizado)
     return r
   })
+
+export const buscarMapaCidades = createServerFn({ method: 'GET' }).handler(
+  async () => {
+    const r = await mapaCidades()
+    cacheavel(r.estado === 'ok' && !r.desatualizado)
+    return r
+  },
+)

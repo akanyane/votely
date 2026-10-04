@@ -97,6 +97,18 @@ export type MunicipiosUf = {
   municipios: [string, string, 0 | 1, string, [number, number]?][]
 }
 
+/**
+ * public/municipios/BR-cidades.json (scripts/mapa-cidades-malha.ts): todos os
+ * municípios numa só projeção. [código TSE, nome, UF, caminho]
+ */
+export type MalhaCidades = {
+  largura: number
+  altura: number
+  cidades: [string, string, UF, string][]
+  /** Contorno de cada estado, na mesma projeção: [sigla, caminho] */
+  estados: [UF, string][]
+}
+
 /** % de seções apuradas de cada município de uma UF (EA15) */
 export type ApuracaoMunicipios = {
   uf: UF
@@ -112,4 +124,24 @@ export type ResultadoMunicipio = {
   votacaoLiberada: boolean
   totalizadoEm: string | null
   candidatos: Pick<CandidatoLive, 'sq' | 'nome' | 'partido' | 'votos' | 'pct'>[]
+}
+
+/**
+ * Retrato do presidente em todas as cidades (scripts/mapa-cidades.ts), lido
+ * pela página /live/map. Os candidatos vêm na ordem nacional; cada cidade
+ * aponta para eles pelo índice.
+ */
+export type MapaCidades = {
+  /** ISO; quando o retrato terminou de ser montado */
+  geradoEm: string
+  simulado: boolean
+  /** % de seções apuradas no Brasil e hora da totalização nacional */
+  pctBrasil: number
+  totalizadoEm: string | null
+  candidatos: { sq: string; nome: string; partido: string; numero: string }[]
+  /**
+   * código TSE → [índice do 1º, % do 1º, índice do 2º, % do 2º, % apurado].
+   * Índice -1 quando não há 2º.
+   */
+  cidades: Record<string, [number, number, number, number, number]>
 }
