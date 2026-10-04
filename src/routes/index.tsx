@@ -59,7 +59,16 @@ function Home() {
     if (salva.turno !== ELEICAO.turno) setTurnoAntigo(salva.turno)
   }, [form])
 
-  // Guarda no navegador (restaura ao reabrir) e baixa a colinha como imagem
+  // Guarda a cada mudança, para recarregar a página não desfazer a edição.
+  // Mantém o turno da colinha restaurada até a pessoa salvar de novo.
+  useEffect(() => {
+    if (!uf) return
+    try {
+      salvarColinha({ uf, v: votos, turno: turnoAntigo ?? ELEICAO.turno })
+    } catch {}
+  }, [uf, votos, turnoAntigo])
+
+  // Baixa a colinha como imagem (e marca como do turno atual)
   const salvar = async () => {
     try {
       if (uf) salvarColinha({ uf, v: votos, turno: ELEICAO.turno })
