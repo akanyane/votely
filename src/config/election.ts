@@ -8,7 +8,7 @@ export type Turno = 1 | 2
 
 export const ELEICAO = {
   /** Turno em exibição no Live. Trocar para 2 depois da totalização do 1º. */
-  turno: 1 as Turno,
+  turno: 2 as Turno,
 
   turnos: {
     1: {
@@ -31,6 +31,8 @@ export const ELEICAO = {
   atualizacaoMs: 30_000,
 } as const
 
-export const turnoAtual = () => ELEICAO.turnos[ELEICAO.turno]
+export const turnoAtual = (turno: Turno = ELEICAO.turno) =>
+  ELEICAO.turnos[turno]
 
-export const liberacaoAtual = () => new Date(turnoAtual().liberacao)
+export const liberacaoAtual = (turno: Turno = ELEICAO.turno) =>
+  new Date(turnoAtual(turno).liberacao)

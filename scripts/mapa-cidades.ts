@@ -4,7 +4,8 @@
  * apuração), em ritmo controlado: no máximo ~20 requisições/s ao TSE, e só
  * cidades que o próprio TSE lista no arquivo de acompanhamento da UF.
  *
- * Uso: TSE_AMBIENTE=oficial bun run mapa:cidades [--loop MIN] [--sem-redis]
+ * Uso: TSE_AMBIENTE=oficial bun run mapa:cidades [--loop MIN] [--turno 1|2] [--sem-redis]
+ * (--turno padrão: o turno atual, ELEICAO.turno)
  */
 import { writeFile } from 'node:fs/promises'
 import { Redis } from '@upstash/redis'
@@ -24,6 +25,9 @@ const args = process.argv.slice(2)
 const iLoop = args.indexOf('--loop')
 const loopMin = iLoop >= 0 ? Number(args[iLoop + 1] ?? 10) : 0
 const semRedis = args.includes('--sem-redis')
+const iTurno = args.indexOf('--turno')
+const turno: 1 | 2 =
+  iTurno >= 0 ? (args[iTurno + 1] === '1' ? 1 : 2) : ELEICAO.turno
 
 // O cache de cada arquivo fica só na memória deste processo: gravar 5.570
 // entradas no Redis custaria caro e ninguém mais as lê.
@@ -41,7 +45,7 @@ const TRABALHADORES = 20
 
 async function retrato(): Promise<MapaCidades> {
   const t0 = Date.now()
-  const br = await resultadoLive('pres', 'br')
+  const br = await resultadoLive('pres', 'br', turno)
   if (br.estado !== 'ok') throw new Error(`presidente BR: ${br.estado}`)
   const candidatos = br.dados.candidatos.map(
     ({ sq, nome, partido, numero }) => ({
@@ -56,7 +60,7 @@ async function retrato(): Promise<MapaCidades> {
   const fila: { uf: (typeof UFS)[number][0]; cd: string; pct: number }[] = []
   const cidades: MapaCidades['cidades'] = {}
   for (const [uf] of UFS) {
-    const a = await apuracaoMunicipios(uf)
+    const a = await apuracaoMunicipios(uf, turno)
     if (a.estado !== 'ok') {
       console.error(`${uf}: acompanhamento ${a.estado}`)
       continue
@@ -74,7 +78,7 @@ async function retrato(): Promise<MapaCidades> {
     Array.from({ length: TRABALHADORES }, async () => {
       for (let item = fila.shift(); item; item = fila.shift()) {
         const inicio = Date.now()
-        const r = await resultadoMunicipio('pres', item.uf, item.cd)
+        const r = await resultadoMunicipio('pres', item.uf, item.cd, turno)
         if (r.estado === 'ok') {
           const [c1, c2] = r.dados.candidatos
           cidades[item.cd] = [
@@ -95,7 +99,7 @@ async function retrato(): Promise<MapaCidades> {
     `${Object.keys(cidades).length} cidades · ${feitos} buscadas · ${falhas} falhas · ${((Date.now() - t0) / 1000).toFixed(0)} s`,
   )
   // O total do Brasil lido de novo no fim, para combinar com as cidades
-  const fim = await resultadoLive('pres', 'br')
+  const fim = await resultadoLive('pres', 'br', turno)
   const total = fim.estado === 'ok' ? fim.dados : br.dados
   return {
     geradoEm: new Date().toISOString(),
@@ -107,9 +111,9 @@ async function retrato(): Promise<MapaCidades> {
   }
 }
 
-const chave = chaveMapaCidades(ambienteTse().nome, ELEICAO.turno)
+const chave = chaveMapaCidades(ambienteTse().nome, turno)
 console.log(
-  `ambiente: ${ambienteTse().nome} · destino: ${destino ? chave : 'só arquivo'}`,
+  `ambiente: ${ambienteTse().nome} · ${turno}º turno · destino: ${destino ? chave : 'só arquivo'}`,
 )
 for (;;) {
   const inicio = Date.now()
@@ -117,7 +121,8 @@ for (;;) {
     const m = await retrato()
     const json = JSON.stringify(m)
     await writeFile('mapa-cidades.json', json)
-    if (destino) await destino.set(chave, m, { ex: 7 * 24 * 3600 })
+    // Sem validade: o retrato de cada turno fica guardado como histórico
+    if (destino) await destino.set(chave, m)
     console.log(
       `${new Date().toTimeString().slice(0, 8)} retrato gravado · ${(json.length / 1024).toFixed(0)} KB · BR ${m.pctBrasil.toFixed(1)}%`,
     )

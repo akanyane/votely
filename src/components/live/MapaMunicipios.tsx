@@ -7,6 +7,7 @@ import {
 } from '@/lib/live/consultas'
 import { fmtHora, fmtPct, fmtVotos, ordinal } from '@/lib/live/formato'
 import type { CargoLive } from '@/lib/live/tipos'
+import { useTurno } from '@/lib/live/turno'
 import { nomeUf, type UF } from '@/lib/votely'
 import { Barra, Cartao } from './partes'
 
@@ -36,8 +37,9 @@ type Props = {
 
 /** Use com key={uf}: a cidade escolhida volta para a capital ao trocar de UF */
 export function MapaMunicipios({ uf, cargo, nomeCargo }: Props) {
+  const turno = useTurno()
   const malha = useQuery(malhaQuery(uf))
-  const apuracao = useQuery(apuracaoMunicipiosQuery(uf))
+  const apuracao = useQuery(apuracaoMunicipiosQuery(uf, turno))
   const idBusca = useId()
 
   const municipios = malha.data?.municipios ?? []
@@ -46,7 +48,7 @@ export function MapaMunicipios({ uf, cargo, nomeCargo }: Props) {
   const sel = escolhida ?? capital
   const [busca, setBusca] = useState('')
 
-  const cidade = useQuery(resultadoMunicipioQuery(cargo, uf, sel))
+  const cidade = useQuery(resultadoMunicipioQuery(cargo, uf, sel, turno))
 
   const a = apuracao.data?.estado === 'ok' ? apuracao.data.dados : null
   const pct = a?.pct ?? {}

@@ -55,9 +55,13 @@ export type UfNoMapa = {
 }
 
 /** Presidente por UF, para o mapa: 27 arquivos, todos com o mesmo cache */
-export async function mapaPresidente(): Promise<EstadoLive<UfNoMapa[]>> {
+export async function mapaPresidente(
+  turno: 1 | 2 = ELEICAO.turno,
+): Promise<EstadoLive<UfNoMapa[]>> {
   const porUf = await Promise.all(
-    UFS.map(async ([uf]) => [uf, await resultadoLive('pres', uf)] as const),
+    UFS.map(
+      async ([uf]) => [uf, await resultadoLive('pres', uf, turno)] as const,
+    ),
   )
   const primeiro = porUf.find(([, r]) => r.estado !== 'ok')?.[1]
   if (porUf.every(([, r]) => r.estado !== 'ok')) {
@@ -92,8 +96,9 @@ export async function mapaPresidente(): Promise<EstadoLive<UfNoMapa[]>> {
 export async function historicoLive(
   cargo: CargoLive,
   abrangencia: UF | 'br',
+  turno: 1 | 2 = ELEICAO.turno,
 ): Promise<Snapshot[]> {
-  const r = await resultadoLive(cargo, abrangencia)
+  const r = await resultadoLive(cargo, abrangencia, turno)
   if (r.estado !== 'ok') return []
   try {
     return await lerHistorico(
