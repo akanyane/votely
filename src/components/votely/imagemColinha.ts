@@ -1,3 +1,4 @@
+import { turnoAtual } from '@/config/election'
 import { type LinhaResumo, legenda } from './resumo'
 
 // Mesma composição de uma cópia da FolhaImpressao (meia folha A4 a 96 dpi),
@@ -60,7 +61,7 @@ export async function gerarImagemColinha(uf: string, resumo: LinhaResumo[]) {
   // Cabeçalho
   texto('MINHA COLINHA', PAD_X, 58, `800 28px ${SANS}`, { espaco: 1.1 })
   texto(
-    'Eleições 2026 · 1º turno · domingo, 4 de outubro',
+    `Eleições 2026 · ${turnoAtual().extenso}`,
     PAD_X,
     82,
     `400 16px ${SANS}`,

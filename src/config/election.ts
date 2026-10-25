@@ -14,12 +14,14 @@ export const ELEICAO = {
     1: {
       data: '2026-10-04',
       rotulo: '1º turno · 4 de outubro',
+      extenso: '1º turno · domingo, 4 de outubro',
       // Resolução 23.751/2026, art. 265 §1º: presidente liberado às 17h de Brasília
       liberacao: '2026-10-04T17:00:00-03:00',
     },
     2: {
       data: '2026-10-25',
       rotulo: '2º turno · 25 de outubro',
+      extenso: '2º turno · domingo, 25 de outubro',
       liberacao: '2026-10-25T17:00:00-03:00',
     },
   },
