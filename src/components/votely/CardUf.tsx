@@ -6,6 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { turnoAtual } from '@/config/election'
 import { isUf, type UF, UFS } from '@/lib/votely'
 
 const ITEMS = UFS.map(([sigla, nome]) => ({
@@ -30,7 +31,7 @@ export function CardUf({ uf, onChange }: Props) {
           Onde você vota?
         </label>
         <span className="inline-flex h-[30px] items-center rounded-full bg-accent px-3 text-[15px] font-bold text-accent-foreground">
-          1º turno · 4 de outubro
+          {turnoAtual().rotulo}
         </span>
       </div>
 

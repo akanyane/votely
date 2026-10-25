@@ -1,4 +1,5 @@
 import { ScissorsIcon } from 'lucide-react'
+import { turnoAtual } from '@/config/election'
 import { type LinhaResumo, legenda } from './resumo'
 
 /**
@@ -46,7 +47,7 @@ function Copia({
             MINHA COLINHA
           </div>
           <div className="text-[16px]">
-            Eleições 2026 · 1º turno · domingo, 4 de outubro
+            Eleições 2026 · {turnoAtual().extenso}
           </div>
         </div>
         <div className="flex items-center gap-2">
