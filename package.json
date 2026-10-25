@@ -16,7 +16,8 @@
     "live:carga": "bun scripts/carga.ts",
     "municipios": "bun scripts/municipios.ts",
     "mapa:malha": "bun scripts/mapa-cidades-malha.ts",
-    "mapa:cidades": "bun scripts/mapa-cidades.ts"
+    "mapa:cidades": "bun scripts/mapa-cidades.ts",
+    "presidios": "bun scripts/presidios.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
