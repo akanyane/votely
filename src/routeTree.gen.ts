@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as LiveRouteImport } from './routes/live'
 import { Route as Live1TurnoRouteImport } from './routes/live_.1-turno'
 import { Route as LiveMapRouteImport } from './routes/live_.map'
+import { Route as LivePainelRouteImport } from './routes/live_.painel'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,18 +35,25 @@ const LiveMapRoute = LiveMapRouteImport.update({
   path: '/live/map',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LivePainelRoute = LivePainelRouteImport.update({
+  id: '/live_/painel',
+  path: '/live/painel',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/live': typeof LiveRoute
   '/live/1-turno': typeof Live1TurnoRoute
   '/live/map': typeof LiveMapRoute
+  '/live/painel': typeof LivePainelRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/live': typeof LiveRoute
   '/live/1-turno': typeof Live1TurnoRoute
   '/live/map': typeof LiveMapRoute
+  '/live/painel': typeof LivePainelRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +61,20 @@ export interface FileRoutesById {
   '/live': typeof LiveRoute
   '/live_/1-turno': typeof Live1TurnoRoute
   '/live_/map': typeof LiveMapRoute
+  '/live_/painel': typeof LivePainelRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/live' | '/live/1-turno' | '/live/map'
+  fullPaths: '/' | '/live' | '/live/1-turno' | '/live/map' | '/live/painel'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/live' | '/live/1-turno' | '/live/map'
-  id: '__root__' | '/' | '/live' | '/live_/1-turno' | '/live_/map'
+  to: '/' | '/live' | '/live/1-turno' | '/live/map' | '/live/painel'
+  id:
+    | '__root__'
+    | '/'
+    | '/live'
+    | '/live_/1-turno'
+    | '/live_/map'
+    | '/live_/painel'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,6 +82,7 @@ export interface RootRouteChildren {
   LiveRoute: typeof LiveRoute
   Live1TurnoRoute: typeof Live1TurnoRoute
   LiveMapRoute: typeof LiveMapRoute
+  LivePainelRoute: typeof LivePainelRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +115,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LiveMapRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/live_/painel': {
+      id: '/live_/painel'
+      path: '/live/painel'
+      fullPath: '/live/painel'
+      preLoaderRoute: typeof LivePainelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -107,6 +130,7 @@ const rootRouteChildren: RootRouteChildren = {
   LiveRoute: LiveRoute,
   Live1TurnoRoute: Live1TurnoRoute,
   LiveMapRoute: LiveMapRoute,
+  LivePainelRoute: LivePainelRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
