@@ -51,7 +51,18 @@ export async function resultadoLive(
 export type UfNoMapa = {
   uf: UF
   pctSecoes: number
-  top: { sq: string; nome: string; partido: string; pct: number }[]
+  /** Totalização da UF concluída (tf = "s") */
+  final: boolean
+  validos: number
+  /** Válidos + brancos + nulos já apurados */
+  comparecimento: number
+  top: {
+    sq: string
+    nome: string
+    partido: string
+    pct: number
+    votos: number
+  }[]
 }
 
 /** Presidente por UF, para o mapa: 27 arquivos, todos com o mesmo cache */
@@ -82,11 +93,18 @@ export async function mapaPresidente(
     dados.push({
       uf,
       pctSecoes: r.dados.secoes.pct,
+      final: r.dados.final,
+      validos: r.dados.totais.validos,
+      comparecimento:
+        r.dados.totais.validos +
+        r.dados.totais.brancos.votos +
+        r.dados.totais.nulos.votos,
       top: r.dados.candidatos.slice(0, 3).map((c) => ({
         sq: c.sq,
         nome: c.nome,
         partido: c.partido,
         pct: c.pct,
+        votos: c.votos,
       })),
     })
   }
