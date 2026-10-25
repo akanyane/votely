@@ -169,13 +169,14 @@ export function resolverAcompanhamento(
   uf: UF,
   turno: 1 | 2,
 ): Alvo {
-  const eleicao = el?.estadual[turno]
-  if (!el?.dirAcompanhamento || !eleicao) return { tipo: 'aguardando' }
+  if (!el?.dirAcompanhamento) return { tipo: 'aguardando' }
   const sigla = uf.toLowerCase()
-  const cobre = eleicao.abr.some(
-    (a) => a.cd === sigla || (turno === 1 && a.cd === 'br'),
+  // No 2º turno a estadual só cobre as UFs com governador; nas demais, o
+  // acompanhamento vem da federal (abrangência "br", confirmado em 25/10)
+  const eleicao = [el.estadual[turno], el.federal[turno]].find((e) =>
+    e?.abr.some((a) => a.cd === sigla || a.cd === 'br'),
   )
-  if (!cobre) return { tipo: 'aguardando' }
+  if (!eleicao) return { tipo: 'aguardando' }
 
   const amb = ambienteTse()
   const arquivo = `${sigla}-e${eleicao.cd.padStart(6, '0')}-ab.json`
