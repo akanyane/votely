@@ -8,7 +8,7 @@ export type Turno = 1 | 2
 
 export const ELEICAO = {
   /** Turno em exibição no Live. Trocar para 2 depois da totalização do 1º. */
-  turno: 1 as Turno,
+  turno: 2 as Turno,
 
   turnos: {
     1: {
