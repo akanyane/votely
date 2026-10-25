@@ -43,25 +43,27 @@ export const resultadoQuery = (
     ...vivo,
   })
 
-export const mapaQuery = () =>
+export const mapaQuery = (turno: 1 | 2 = ELEICAO.turno) =>
   queryOptions({
-    queryKey: ['live', 'mapa', ELEICAO.turno],
-    queryFn: () => buscarMapa(),
+    queryKey: ['live', 'mapa', turno],
+    queryFn: () => buscarMapa({ data: { turno } }),
     ...vivo,
   })
 
-export const historicoQuery = (cargo: CargoLive, uf: UF | null) =>
+export const historicoQuery = (
+  cargo: CargoLive,
+  uf: UF | null,
+  turno: 1 | 2 = ELEICAO.turno,
+) =>
   queryOptions({
-    queryKey: [
-      'live',
-      'historico',
-      ELEICAO.turno,
-      cargo,
-      cargo === 'pres' ? 'br' : uf,
-    ],
+    queryKey: ['live', 'historico', turno, cargo, cargo === 'pres' ? 'br' : uf],
     queryFn: () =>
       buscarHistorico({
-        data: { cargo, uf: cargo === 'pres' ? undefined : (uf ?? undefined) },
+        data: {
+          cargo,
+          uf: cargo === 'pres' ? undefined : (uf ?? undefined),
+          turno,
+        },
       }),
     ...vivo,
   })
@@ -79,10 +81,10 @@ export const malhaQuery = (uf: UF | 'BR') =>
     gcTime: 30 * 60_000,
   })
 
-export const apuracaoMunicipiosQuery = (uf: UF) =>
+export const apuracaoMunicipiosQuery = (uf: UF, turno: 1 | 2 = ELEICAO.turno) =>
   queryOptions({
-    queryKey: ['live', 'municipios', ELEICAO.turno, uf],
-    queryFn: () => buscarApuracaoMunicipios({ data: { uf } }),
+    queryKey: ['live', 'municipios', turno, uf],
+    queryFn: () => buscarApuracaoMunicipios({ data: { uf, turno } }),
     ...vivo,
   })
 
@@ -90,12 +92,13 @@ export const resultadoMunicipioQuery = (
   cargo: CargoLive,
   uf: UF,
   municipio: string | null,
+  turno: 1 | 2 = ELEICAO.turno,
 ) =>
   queryOptions({
-    queryKey: ['live', 'municipio', ELEICAO.turno, cargo, uf, municipio],
+    queryKey: ['live', 'municipio', turno, cargo, uf, municipio],
     queryFn: () =>
       buscarResultadoMunicipio({
-        data: { cargo, uf, municipio: municipio ?? '' },
+        data: { cargo, uf, municipio: municipio ?? '', turno },
       }),
     enabled: !!municipio,
     ...vivo,
@@ -104,10 +107,10 @@ export const resultadoMunicipioQuery = (
   })
 
 /** Retrato de todas as cidades (muda a cada ~10 min) */
-export const mapaCidadesQuery = () =>
+export const mapaCidadesQuery = (turno: 1 | 2 = ELEICAO.turno) =>
   queryOptions({
-    queryKey: ['live', 'mapa-cidades', ELEICAO.turno],
-    queryFn: () => buscarMapaCidades(),
+    queryKey: ['live', 'mapa-cidades', turno],
+    queryFn: () => buscarMapaCidades({ data: { turno } }),
     ...vivo,
     refetchInterval: 60_000,
   })

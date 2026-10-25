@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { buttonVariants } from '@/components/ui/button'
 import { liberacaoAtual, turnoAtual } from '@/config/election'
+import { useTurno } from '@/lib/live/turno'
 import { Chip } from './partes'
 
 const dois = (n: number) => String(n).padStart(2, '0')
@@ -11,6 +12,7 @@ const dois = (n: number) => String(n).padStart(2, '0')
  * sozinha para os resultados quando o TSE publicar dados.
  */
 export function AntesDaApuracao() {
+  const turno = useTurno()
   // Relógio só no navegador (evita divergência com o HTML do servidor)
   const [agora, setAgora] = useState<number | null>(null)
   useEffect(() => {
@@ -20,7 +22,7 @@ export function AntesDaApuracao() {
   }, [])
 
   const faltam =
-    agora === null ? null : Math.max(0, liberacaoAtual().getTime() - agora)
+    agora === null ? null : Math.max(0, liberacaoAtual(turno).getTime() - agora)
   const s = faltam === null ? 0 : Math.floor(faltam / 1000)
   // Mais de um dia: dias/horas/minutos ("212 horas" é difícil de ler)
   const partes =
@@ -42,7 +44,7 @@ export function AntesDaApuracao() {
 
   return (
     <section className="mx-auto flex max-w-[560px] flex-col items-center gap-4 rounded-xl border border-border bg-card px-5 py-6 text-center">
-      <Chip>{turnoAtual().rotulo}</Chip>
+      <Chip>{turnoAtual(turno).rotulo}</Chip>
       <h1 className="text-[27px] leading-[1.2] font-extrabold text-balance">
         {passouDaHora
           ? 'Aguardando os primeiros resultados'

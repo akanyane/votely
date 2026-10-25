@@ -14,9 +14,12 @@ export const chaveMapaCidades = (ambiente: string, turno: 1 | 2) =>
   `votely:mapa-cidades:v1:${ambiente === 'oficial' ? 'ofi' : 'sim'}:t${turno}`
 
 const MEMORIA_MS = 30_000
-let guardado: { em: number; dados: MapaCidades | null } | null = null
+const memoria = new Map<1 | 2, { em: number; dados: MapaCidades | null }>()
 
-export async function mapaCidades(): Promise<EstadoLive<MapaCidades>> {
+export async function mapaCidades(
+  turno: 1 | 2 = ELEICAO.turno,
+): Promise<EstadoLive<MapaCidades>> {
+  const guardado = memoria.get(turno)
   if (guardado && Date.now() - guardado.em < MEMORIA_MS) {
     return guardado.dados ? ok(guardado.dados) : { estado: 'aguardando' }
   }
@@ -24,9 +27,9 @@ export async function mapaCidades(): Promise<EstadoLive<MapaCidades>> {
   if (!r) return await arquivoLocal()
   try {
     const dados = await r.get<MapaCidades>(
-      chaveMapaCidades(ambienteTse().nome, ELEICAO.turno),
+      chaveMapaCidades(ambienteTse().nome, turno),
     )
-    guardado = { em: Date.now(), dados: dados ?? null }
+    memoria.set(turno, { em: Date.now(), dados: dados ?? null })
     return dados ? ok(dados) : { estado: 'aguardando' }
   } catch (e) {
     console.error('[mapa-cidades]', e)

@@ -31,6 +31,8 @@ export const ELEICAO = {
   atualizacaoMs: 30_000,
 } as const
 
-export const turnoAtual = () => ELEICAO.turnos[ELEICAO.turno]
+export const turnoAtual = (turno: Turno = ELEICAO.turno) =>
+  ELEICAO.turnos[turno]
 
-export const liberacaoAtual = () => new Date(turnoAtual().liberacao)
+export const liberacaoAtual = (turno: Turno = ELEICAO.turno) =>
+  new Date(turnoAtual(turno).liberacao)

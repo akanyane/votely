@@ -6,6 +6,7 @@ import type { ColinhaSalva } from '@/lib/colinha'
 import { resultadoQuery } from '@/lib/live/consultas'
 import { fmtPct, fmtVotos, ordinal } from '@/lib/live/formato'
 import type { CargoLive, StatusCandidato } from '@/lib/live/tipos'
+import { useTurno } from '@/lib/live/turno'
 import { CARGOS, type CargoId, nomeUf, tituloCompleto } from '@/lib/votely'
 import { Selo } from './partes'
 
@@ -38,12 +39,13 @@ type Props = {
 }
 
 export function SeusCandidatos({ colinha, onIr }: Props) {
+  const turno = useTurno()
   const uf = colinha?.uf ?? null
   const estaticos = useCandidatos(uf ?? '')
   const cargos: CargoLive[] = ['pres', 'gov', 'sen', 'depfed', 'depest']
   const consultas = useQueries({
     queries: cargos.map((c) => ({
-      ...resultadoQuery(c, uf),
+      ...resultadoQuery(c, uf, turno),
       enabled: !!colinha,
     })),
   })

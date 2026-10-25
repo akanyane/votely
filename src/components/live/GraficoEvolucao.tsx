@@ -19,7 +19,11 @@ const M = { topo: 12, dir: 16, base: 30, esq: 48 }
  * quando o % apurado volta para trás, começou uma nova rodada; fica a última.
  */
 export function ultimaRodada(snaps: Snapshot[]): Snapshot[] {
-  const ordenados = [...snaps].sort((a, b) => Date.parse(a.t) - Date.parse(b.t))
+  // O mesmo horário pode ter sido gravado duas vezes; fica a última versão
+  const porHorario = new Map(snaps.map((s) => [s.t, s]))
+  const ordenados = [...porHorario.values()].sort(
+    (a, b) => Date.parse(a.t) - Date.parse(b.t),
+  )
   let inicio = 0
   for (let i = 1; i < ordenados.length; i++)
     if (ordenados[i].p < ordenados[i - 1].p) inicio = i
@@ -57,7 +61,7 @@ type Props = {
 }
 
 export function GraficoEvolucao({ r, uf }: Props) {
-  const historico = useQuery(historicoQuery(r.cargo, uf))
+  const historico = useQuery(historicoQuery(r.cargo, uf, r.turno))
   const [caixa, largura] = useLargura<HTMLDivElement>()
   const [foco, setFoco] = useState<number | null>(null)
   const idTabela = useId()

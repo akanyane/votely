@@ -45,7 +45,7 @@ export function StatusApuracao({
       <div ref={fixoRef} className="sticky top-0 z-10 bg-background pb-3">
         <section className="flex flex-col gap-2.5 rounded-xl border border-border bg-card px-[18px] py-4">
           {r.turno === 2 && (
-            <Chip className="self-start">{turnoAtual().rotulo}</Chip>
+            <Chip className="self-start">{turnoAtual(r.turno).rotulo}</Chip>
           )}
           <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
             <span className="text-[40px] leading-[1.05] font-bold tracking-[-0.01em] tabular-nums">

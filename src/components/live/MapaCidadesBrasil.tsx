@@ -4,6 +4,7 @@ import { malhaCidadesQuery, mapaCidadesQuery } from '@/lib/live/consultas'
 import { corPartido } from '@/lib/live/coresPartidos'
 import { fmtHora, fmtNum, fmtPct } from '@/lib/live/formato'
 import type { MalhaCidades, MapaCidades } from '@/lib/live/tipos'
+import { useTurno } from '@/lib/live/turno'
 import { nomeUf } from '@/lib/votely'
 import { Carregando } from './Carregando'
 import { Cartao } from './partes'
@@ -11,7 +12,7 @@ import { Cartao } from './partes'
 /** Mapa do Brasil com todas as cidades, pintadas pelo partido do 1º colocado */
 export function MapaCidadesBrasil() {
   const malha = useQuery(malhaCidadesQuery())
-  const mapa = useQuery(mapaCidadesQuery())
+  const mapa = useQuery(mapaCidadesQuery(useTurno()))
   const [escolhida, setEscolhida] = useState<string | null>(null)
 
   const d = mapa.data?.estado === 'ok' ? mapa.data.dados : null
