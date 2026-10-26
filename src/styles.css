@@ -5,9 +5,9 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: "Atkinson Hyperlegible Next", system-ui, sans-serif;
-  --font-heading: var(--font-sans);
-  --font-mono: "Atkinson Hyperlegible Mono", ui-monospace, monospace;
+  --font-sans: "Geist", system-ui, sans-serif;
+  --font-heading: "Archivo", system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, monospace;
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -54,92 +54,52 @@
 }
 
 /*
- * Paleta do handoff (design_handoff_votely/README.md → Design Tokens).
- * --muted é o fundo do avatar/skeleton; o "muted" de texto do design é
- * --muted-foreground. --input é a borda forte (--border-strong do design) e
- * --field é o fundo dos campos.
+ * Paleta do layout "Dashboard Eleições 2026" (painel da apuração), usada na
+ * plataforma toda. O tema é só escuro: a classe .dark fica fixa no <html>.
+ * --muted é o fundo do avatar/skeleton; --input é a borda forte e --field o
+ * fundo dos campos. --r1/--r2 seguem o azul e o verde do duelo (posição no
+ * ranking, nunca partido).
  */
 :root {
-  --background: #f1f4f4;
-  --foreground: #0e1b1e;
-  --card: #ffffff;
-  --card-foreground: #0e1b1e;
-  --popover: #ffffff;
-  --popover-foreground: #0e1b1e;
-  --primary: #155e66;
+  --background: #090a0f;
+  --foreground: #f4f5f8;
+  --card: #0e1019;
+  --card-foreground: #f4f5f8;
+  --popover: #11131f;
+  --popover-foreground: #f4f5f8;
+  --primary: #3b82f6;
   --primary-foreground: #ffffff;
-  --secondary: #e0edee;
-  --secondary-foreground: #0e4a51;
-  --muted: #dae3e4;
-  --muted-foreground: #4a5a5e;
-  --accent: #e0edee;
-  --accent-foreground: #0e4a51;
-  --destructive: #7a1e1a;
-  --border: #d3dcdd;
-  --input: #869a9e;
-  --ring: #155e66;
-  --radius: 0.5rem;
-  --field: #ffffff;
-  --focus-glow: rgba(21, 94, 102, 0.22);
-  --warn: #fff4d9;
-  --warn-foreground: #5c3e00;
-  --warn-border: #e3bd68;
-  --danger: #fbecea;
-  --danger-border: #e5b0aa;
-  --track: #e3eaeb;
-  --r1: #155e66;
+  --secondary: #151a2b;
+  --secondary-foreground: #bfdbfe;
+  --muted: #1a1d2b;
+  --muted-foreground: #8b90a3;
+  --accent: #14203a;
+  --accent-foreground: #93c5fd;
+  --destructive: #fca5a5;
+  --border: rgba(255, 255, 255, 0.09);
+  --input: rgba(255, 255, 255, 0.2);
+  --ring: #3b82f6;
+  --radius: 0.75rem;
+  --field: #0c0e16;
+  --focus-glow: rgba(59, 130, 246, 0.35);
+  --warn: rgba(245, 181, 74, 0.1);
+  --warn-foreground: #f5b54a;
+  --warn-border: rgba(245, 181, 74, 0.35);
+  --danger: rgba(239, 68, 68, 0.08);
+  --danger-border: rgba(239, 68, 68, 0.3);
+  --track: rgba(255, 255, 255, 0.06);
+  --r1: #3b82f6;
   --r1-fg: #ffffff;
-  --r2: #86a3a7;
-  --r2-fg: #0e1b1e;
-  --r3: #d3e0e2;
-  --r3-fg: #0e1b1e;
-  --r4: #4a5a5e;
-  --r5: #b3bfc1;
-  /* Séries do gráfico de evolução (validadas contra --card nos dois temas) */
-  --serie-1: #2a78d6;
-  --serie-2: #eb6834;
-  --serie-3: #1baf7a;
-  color-scheme: light;
-}
-
-.dark {
-  --background: #0a1315;
-  --foreground: #ecf2f3;
-  --card: #121f22;
-  --card-foreground: #ecf2f3;
-  --popover: #121f22;
-  --popover-foreground: #ecf2f3;
-  --primary: #6cc4cc;
-  --primary-foreground: #04262a;
-  --secondary: #163337;
-  --secondary-foreground: #8bd7de;
-  --muted: #223438;
-  --muted-foreground: #a6b5b8;
-  --accent: #163337;
-  --accent-foreground: #8bd7de;
-  --destructive: #f5b8b2;
-  --border: #26373b;
-  --input: #566e73;
-  --ring: #6cc4cc;
-  --field: #0d181b;
-  --focus-glow: rgba(108, 196, 204, 0.3);
-  --warn: #2a2210;
-  --warn-foreground: #f3d48e;
-  --warn-border: #6a5320;
-  --danger: #341918;
-  --danger-border: #6e302c;
-  --track: #1c2c2f;
-  --r1: #6cc4cc;
-  --r1-fg: #04262a;
-  --r2: #3f7278;
-  --r2-fg: #ecf2f3;
-  --r3: #2a4549;
-  --r3-fg: #ecf2f3;
-  --r4: #8fa2a6;
-  --r5: #4f6266;
-  --serie-1: #3987e5;
-  --serie-2: #d95926;
-  --serie-3: #199e70;
+  --r2: #10b981;
+  --r2-fg: #04140e;
+  --r3: #2a2f45;
+  --r3-fg: #f4f5f8;
+  --r4: #8b90a3;
+  --r5: #3a3f52;
+  /* Séries do gráfico de evolução */
+  --serie-1: #22d3ee;
+  --serie-2: #34d399;
+  --serie-3: #f5b54a;
   color-scheme: dark;
 }
 
@@ -154,6 +114,26 @@
     @apply bg-background text-foreground antialiased;
     font-size: 18px;
     line-height: 1.45;
+    background-image:
+      radial-gradient(
+        1000px 520px at 6% -12%,
+        rgba(59, 130, 246, 0.13),
+        transparent 60%
+      ),
+      radial-gradient(
+        1000px 520px at 94% -12%,
+        rgba(16, 185, 129, 0.1),
+        transparent 60%
+      );
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-heading);
+    font-stretch: 85%;
+    letter-spacing: -0.01em;
   }
   button:not(:disabled),
   [role="button"]:not(:disabled) {
@@ -206,6 +186,7 @@
   html,
   body {
     background: #fff !important;
+    background-image: none !important;
     color: #000 !important;
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;

@@ -24,15 +24,8 @@ export const Route = createFileRoute('/live')({
         content: 'Votely Live · Resultados das Eleições 2026',
       },
       { property: 'og:url', content: 'https://votely.akanyane.dev/live' },
-      { name: 'theme-color', content: '#090A0F' },
     ],
-    links: [
-      { rel: 'canonical', href: 'https://votely.akanyane.dev/live' },
-      {
-        rel: 'stylesheet',
-        href: 'https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..800&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap',
-      },
-    ],
+    links: [{ rel: 'canonical', href: 'https://votely.akanyane.dev/live' }],
   }),
   component: Painel,
 })

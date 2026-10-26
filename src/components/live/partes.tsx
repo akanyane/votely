@@ -85,13 +85,7 @@ export function Cartao({
   ...props
 }: React.ComponentProps<'section'>) {
   return (
-    <section
-      className={cn(
-        'rounded-xl border border-border bg-card p-[18px]',
-        className,
-      )}
-      {...props}
-    >
+    <section className={cn('painel-cartao p-[18px]', className)} {...props}>
       {children}
     </section>
   )

@@ -58,13 +58,16 @@ export function Duelo({
         ? 'TENDÊNCIA: DEFINIÇÃO NO 1º TURNO'
         : 'TENDÊNCIA: 2º TURNO'
 
+  const vaoAoSegundo = r.candidatos.filter((c) => c.status === 'segundo_turno')
   const frase = eleito
     ? `Resultado definido pelo TSE: ${nomeCurto(eleito)} vence a eleição.`
-    : turno2
-      ? `${nomeCurto(d[lider])} lidera por ${pct(diff).replace('%', '')} p.p. Faltam ${pct(100 - r.secoes.pct)} das urnas.`
-      : maior > 50
-        ? `${nomeCurto(d[lider])} supera 50% dos votos válidos.`
-        : `Nenhum candidato supera 50% dos votos válidos. Faltam ${pct(50 - maior).replace('%', '')} p.p. para o líder.`
+    : vaoAoSegundo.length === 2
+      ? `Nenhum candidato superou 50% dos votos válidos: ${nomeCurto(vaoAoSegundo[0])} e ${nomeCurto(vaoAoSegundo[1])} disputam o 2º turno.`
+      : turno2
+        ? `${nomeCurto(d[lider])} lidera por ${pct(diff).replace('%', '')} p.p. Faltam ${pct(100 - r.secoes.pct)} das urnas.`
+        : maior > 50
+          ? `${nomeCurto(d[lider])} supera 50% dos votos válidos.`
+          : `Nenhum candidato supera 50% dos votos válidos. Faltam ${pct(50 - maior).replace('%', '')} p.p. para o líder.`
 
   return (
     <section
