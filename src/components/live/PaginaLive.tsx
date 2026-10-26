@@ -257,7 +257,7 @@ function OutroTurno({ turno }: { turno: Turno }) {
       'flex min-h-12 items-center justify-between gap-2 rounded-lg border border-border bg-card px-4 text-[17px] font-bold text-accent-foreground no-underline hover:opacity-80'
     return (
       <div className="mb-4 grid gap-2 sm:grid-cols-2">
-        <Link to="/live/painel" className={estilo}>
+        <Link to="/live" className={estilo}>
           Abrir o painel da apuração
           <ChevronRightIcon
             className="size-[22px] flex-none"

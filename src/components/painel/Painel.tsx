@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
+import { ChevronRightIcon } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { ultimaRodada } from '@/components/live/GraficoEvolucao'
 import { ELEICAO, turnoAtual } from '@/config/election'
@@ -200,8 +201,8 @@ export function Painel() {
         <div className="mx-auto flex max-w-[1440px] flex-col gap-4 px-[clamp(16px,3vw,36px)] pt-[22px] pb-12">
           <header className="flex flex-wrap items-center justify-between gap-4 pb-1.5">
             <Link
-              to="/live"
-              aria-label="Voltar ao Votely Live"
+              to="/"
+              aria-label="Votely: voltar à colinha"
               className="flex items-center gap-3.5 text-inherit no-underline"
             >
               <div className="relative size-[42px] rounded-xl bg-[linear-gradient(135deg,#3B82F6,#06B6D4_50%,#10B981)] p-px shadow-[0_0_24px_rgba(6,182,212,0.25)]">
@@ -340,6 +341,21 @@ export function Painel() {
             </div>
           </header>
 
+          <nav
+            aria-label="Outras páginas do Live"
+            className="-mt-1 flex flex-wrap gap-2"
+          >
+            <Atalho to="/live/classico">
+              {turno === 2
+                ? 'Governador e mapa por município'
+                : 'Governador, senado, deputados e mapa por município'}
+            </Atalho>
+            {turno === 2 && (
+              <Atalho to="/live/1-turno">Resultados do 1º turno</Atalho>
+            )}
+            <Atalho to="/live/map">Mapa por cidade</Atalho>
+          </nav>
+
           {conteudo}
 
           <footer className="f-mono flex flex-wrap justify-between gap-2 pt-1 text-[11px] text-[#7A8096]">
@@ -354,6 +370,24 @@ export function Painel() {
         </div>
       </div>
     </div>
+  )
+}
+
+function Atalho({
+  to,
+  children,
+}: {
+  to: '/live/classico' | '/live/1-turno' | '/live/map'
+  children: React.ReactNode
+}) {
+  return (
+    <Link
+      to={to}
+      className="flex min-h-10 items-center gap-1 rounded-full border border-white/10 bg-white/[0.03] py-1.5 pr-2.5 pl-3.5 text-[13px] font-medium text-[#CBD5E1] no-underline transition-colors hover:bg-white/[0.08] hover:text-[#F4F5F8]"
+    >
+      {children}
+      <ChevronRightIcon aria-hidden className="size-4" strokeWidth={2.4} />
+    </Link>
   )
 }
 

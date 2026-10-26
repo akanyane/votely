@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LiveRouteImport } from './routes/live'
 import { Route as Live1TurnoRouteImport } from './routes/live_.1-turno'
+import { Route as LiveClassicoRouteImport } from './routes/live_.classico'
 import { Route as LiveMapRouteImport } from './routes/live_.map'
 import { Route as LivePainelRouteImport } from './routes/live_.painel'
 
@@ -30,6 +31,11 @@ const Live1TurnoRoute = Live1TurnoRouteImport.update({
   path: '/live/1-turno',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LiveClassicoRoute = LiveClassicoRouteImport.update({
+  id: '/live_/classico',
+  path: '/live/classico',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LiveMapRoute = LiveMapRouteImport.update({
   id: '/live_/map',
   path: '/live/map',
@@ -45,6 +51,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/live': typeof LiveRoute
   '/live/1-turno': typeof Live1TurnoRoute
+  '/live/classico': typeof LiveClassicoRoute
   '/live/map': typeof LiveMapRoute
   '/live/painel': typeof LivePainelRoute
 }
@@ -52,6 +59,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/live': typeof LiveRoute
   '/live/1-turno': typeof Live1TurnoRoute
+  '/live/classico': typeof LiveClassicoRoute
   '/live/map': typeof LiveMapRoute
   '/live/painel': typeof LivePainelRoute
 }
@@ -60,19 +68,33 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/live': typeof LiveRoute
   '/live_/1-turno': typeof Live1TurnoRoute
+  '/live_/classico': typeof LiveClassicoRoute
   '/live_/map': typeof LiveMapRoute
   '/live_/painel': typeof LivePainelRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/live' | '/live/1-turno' | '/live/map' | '/live/painel'
+  fullPaths:
+    | '/'
+    | '/live'
+    | '/live/1-turno'
+    | '/live/classico'
+    | '/live/map'
+    | '/live/painel'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/live' | '/live/1-turno' | '/live/map' | '/live/painel'
+  to:
+    | '/'
+    | '/live'
+    | '/live/1-turno'
+    | '/live/classico'
+    | '/live/map'
+    | '/live/painel'
   id:
     | '__root__'
     | '/'
     | '/live'
     | '/live_/1-turno'
+    | '/live_/classico'
     | '/live_/map'
     | '/live_/painel'
   fileRoutesById: FileRoutesById
@@ -81,6 +103,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LiveRoute: typeof LiveRoute
   Live1TurnoRoute: typeof Live1TurnoRoute
+  LiveClassicoRoute: typeof LiveClassicoRoute
   LiveMapRoute: typeof LiveMapRoute
   LivePainelRoute: typeof LivePainelRoute
 }
@@ -108,6 +131,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Live1TurnoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/live_/classico': {
+      id: '/live_/classico'
+      path: '/live/classico'
+      fullPath: '/live/classico'
+      preLoaderRoute: typeof LiveClassicoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/live_/map': {
       id: '/live_/map'
       path: '/live/map'
@@ -129,6 +159,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LiveRoute: LiveRoute,
   Live1TurnoRoute: Live1TurnoRoute,
+  LiveClassicoRoute: LiveClassicoRoute,
   LiveMapRoute: LiveMapRoute,
   LivePainelRoute: LivePainelRoute,
 }
