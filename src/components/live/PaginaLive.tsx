@@ -235,7 +235,11 @@ export function PaginaLive({ turno, s, onBusca }: Props) {
   return (
     <TurnoProvider value={turno}>
       <div className="mx-auto max-w-[560px] px-4 pt-3 lg:max-w-[1200px] lg:px-10 lg:pt-6">
-        <CabecalhoLive />
+        <CabecalhoLive
+          voltar={
+            turno === 1 && ELEICAO.turno === 2 ? '/live/1-turno' : '/live'
+          }
+        />
         <OutroTurno turno={turno} />
         {conteudo}
         <footer className="mt-10 border-t border-border px-1 pt-6 pb-9 text-[16px] text-muted-foreground">
@@ -249,29 +253,18 @@ export function PaginaLive({ turno, s, onBusca }: Props) {
   )
 }
 
-/** Liga as páginas dos dois turnos: o 1º fica guardado em /live/1-turno */
+/** Liga as páginas dos dois turnos: o 1º fica guardado em /live/1-turno/classico */
 function OutroTurno({ turno }: { turno: Turno }) {
   if (ELEICAO.turno !== 2) return null
   if (turno === 2) {
-    const estilo =
-      'flex min-h-12 items-center justify-between gap-2 rounded-lg border border-border bg-card px-4 text-[17px] font-bold text-accent-foreground no-underline hover:opacity-80'
     return (
-      <div className="mb-4 grid gap-2 sm:grid-cols-2">
-        <Link to="/live" className={estilo}>
-          Abrir o painel da apuração
-          <ChevronRightIcon
-            className="size-[22px] flex-none"
-            strokeWidth={2.6}
-          />
-        </Link>
-        <Link to="/live/1-turno" className={estilo}>
-          Ver os resultados do 1º turno
-          <ChevronRightIcon
-            className="size-[22px] flex-none"
-            strokeWidth={2.6}
-          />
-        </Link>
-      </div>
+      <Link
+        to="/live/1-turno/classico"
+        className="mb-4 flex min-h-12 items-center justify-between gap-2 rounded-lg border border-border bg-card px-4 text-[17px] font-bold text-accent-foreground no-underline hover:opacity-80"
+      >
+        Todos os cargos do 1º turno
+        <ChevronRightIcon className="size-[22px] flex-none" strokeWidth={2.6} />
+      </Link>
     )
   }
   return (

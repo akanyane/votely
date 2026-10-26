@@ -37,7 +37,9 @@ export function BannerApuracao() {
       />
       <span className="min-w-0 flex-1">
         <span className="block text-[20px] leading-[1.2] font-extrabold">
-          A apuração começou — acompanhe no Votely Live
+          {dados && (dados.final || dados.secoes.pct >= 100)
+            ? 'Apuração concluída: veja o resultado no Votely Live'
+            : 'A apuração começou: acompanhe no Votely Live'}
         </span>
         <span className="block text-[16px] opacity-90">
           {dados

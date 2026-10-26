@@ -5,13 +5,11 @@ import {
   createRootRoute,
   HeadContent,
   Outlet,
-  ScriptOnce,
   Scripts,
 } from '@tanstack/react-router'
 import { Analytics } from '@vercel/analytics/react'
 import { type ReactNode, useState } from 'react'
 import { Toaster } from '@/components/ui/sonner'
-import { temaInicialScript } from '@/lib/tema'
 import stylesCss from '../styles.css?url'
 
 const SITE = 'https://votely.akanyane.dev'
@@ -42,7 +40,7 @@ export const Route = createRootRoute({
       { title: TITULO },
       { name: 'description', content: DESCRICAO },
       { name: 'robots', content: 'index, follow' },
-      { name: 'theme-color', content: '#155E66' },
+      { name: 'theme-color', content: '#090A0F' },
       // Prévia de link (WhatsApp, redes sociais)
       { property: 'og:type', content: 'website' },
       { property: 'og:site_name', content: 'Votely' },
@@ -72,7 +70,7 @@ export const Route = createRootRoute({
       },
       {
         rel: 'stylesheet',
-        href: 'https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;500;700;800&family=Atkinson+Hyperlegible+Mono:wght@500;700&display=swap',
+        href: 'https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..800&family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;700&display=swap',
       },
       { rel: 'stylesheet', href: stylesCss },
       { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
@@ -99,10 +97,9 @@ function RootComponent() {
 
 function RootDocument({ children }: { children: ReactNode }) {
   return (
-    // A classe .dark é aplicada pelo script antes da hidratação
-    <html lang="pt-BR" suppressHydrationWarning>
+    // Tema único, escuro (layout do painel da apuração)
+    <html lang="pt-BR" className="dark">
       <head>
-        <ScriptOnce>{temaInicialScript}</ScriptOnce>
         <HeadContent />
       </head>
       <body>

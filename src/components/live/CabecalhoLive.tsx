@@ -1,35 +1,30 @@
 import { Link } from '@tanstack/react-router'
-import { CheckIcon, ChevronLeftIcon, MoonIcon, SunIcon } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { useTema } from '@/lib/tema'
+import { ChevronLeftIcon } from 'lucide-react'
+import { Pilula, Selo } from '@/components/votely/Marca'
 
-export function CabecalhoLive() {
-  const { dark, alternar } = useTema()
+/** Cabeçalho das páginas com todos os cargos (/live/classico e 1º turno) */
+export function CabecalhoLive({
+  voltar,
+}: {
+  /** Painel ao qual esta página pertence */
+  voltar: '/live' | '/live/1-turno'
+}) {
   return (
-    <header className="flex items-center justify-between gap-2 pt-1 pb-4">
+    <header className="flex flex-wrap items-center justify-between gap-3 pt-1 pb-4">
       <Link
-        to="/"
+        to={voltar}
         className="flex min-h-12 items-center gap-0.5 pr-2 text-[17px] font-bold text-accent-foreground no-underline hover:opacity-80"
       >
         <ChevronLeftIcon className="size-[22px]" strokeWidth={2.6} />
-        Colinha
+        Painel
       </Link>
-      <div className="flex items-center gap-2.5">
-        <div className="grid size-9 place-items-center rounded-lg bg-primary text-primary-foreground">
-          <CheckIcon className="size-[22px]" strokeWidth={3} />
-        </div>
-        <div className="text-[24px] font-extrabold tracking-[-0.02em]">
+      <div className="flex items-center gap-3">
+        <Selo />
+        <div className="text-[22px] font-bold [font-family:var(--font-heading)] [font-stretch:85%]">
           Votely <span className="text-primary">Live</span>
         </div>
       </div>
-      <Button
-        variant="outline"
-        onClick={alternar}
-        aria-label={dark ? 'Usar modo claro' : 'Usar modo escuro'}
-        className="size-12 flex-none rounded-lg border-border bg-card text-foreground dark:border-border dark:bg-card [&_svg:not([class*='size-'])]:size-[22px]"
-      >
-        {dark ? <SunIcon /> : <MoonIcon />}
-      </Button>
+      <Pilula to="/">Colinha</Pilula>
     </header>
   )
 }

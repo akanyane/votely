@@ -3,7 +3,7 @@ import { Link } from '@tanstack/react-router'
 import { ChevronRightIcon } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { ultimaRodada } from '@/components/live/GraficoEvolucao'
-import { ELEICAO, turnoAtual } from '@/config/election'
+import { ELEICAO, type Turno, turnoAtual } from '@/config/election'
 import { historicoQuery, mapaQuery, resultadoQuery } from '@/lib/live/consultas'
 import {
   duelo,
@@ -26,9 +26,8 @@ import { Mapa } from './Mapa'
 /** Virada no estado fica marcada por 3 minutos */
 const VIRADA_MS = 3 * 60_000
 
-/** Painel da apuração de presidente (/live/painel) */
-export function Painel() {
-  const turno = ELEICAO.turno
+/** Painel da apuração de presidente (/live e, para o 1º turno, /live/1-turno) */
+export function Painel({ turno = ELEICAO.turno }: { turno?: Turno }) {
   const [pausado, setPausado] = useState(false)
   const [visao, setVisao] = useState<'geral' | 'regiao'>('geral')
   const [regiao, setRegiao] = useState<Regiao | null>(null)
@@ -345,15 +344,29 @@ export function Painel() {
             aria-label="Outras páginas do Live"
             className="-mt-1 flex flex-wrap gap-2"
           >
-            <Atalho to="/live/classico">
-              {turno === 2
-                ? 'Governador e mapa por município'
-                : 'Governador, senado, deputados e mapa por município'}
-            </Atalho>
-            {turno === 2 && (
-              <Atalho to="/live/1-turno">Resultados do 1º turno</Atalho>
+            {turno === 1 && ELEICAO.turno === 2 ? (
+              <>
+                <Atalho to="/live">Ir para o 2º turno</Atalho>
+                <Atalho to="/live/1-turno/classico">
+                  Governador, senado, deputados e mapa por município
+                </Atalho>
+                <Atalho to="/live/map" search={{ turno: 1 }}>
+                  Mapa por cidade do 1º turno
+                </Atalho>
+              </>
+            ) : (
+              <>
+                <Atalho to="/live/classico">
+                  {turno === 2
+                    ? 'Governador e mapa por município'
+                    : 'Governador, senado, deputados e mapa por município'}
+                </Atalho>
+                {turno === 2 && (
+                  <Atalho to="/live/1-turno">Resultados do 1º turno</Atalho>
+                )}
+                <Atalho to="/live/map">Mapa por cidade</Atalho>
+              </>
             )}
-            <Atalho to="/live/map">Mapa por cidade</Atalho>
           </nav>
 
           {conteudo}
@@ -375,14 +388,22 @@ export function Painel() {
 
 function Atalho({
   to,
+  search,
   children,
 }: {
-  to: '/live/classico' | '/live/1-turno' | '/live/map'
+  to:
+    | '/live'
+    | '/live/classico'
+    | '/live/1-turno'
+    | '/live/1-turno/classico'
+    | '/live/map'
+  search?: { turno: 1 }
   children: React.ReactNode
 }) {
   return (
     <Link
       to={to}
+      search={search as never}
       className="flex min-h-10 items-center gap-1 rounded-full border border-white/10 bg-white/[0.03] py-1.5 pr-2.5 pl-3.5 text-[13px] font-medium text-[#CBD5E1] no-underline transition-colors hover:bg-white/[0.08] hover:text-[#F4F5F8]"
     >
       {children}
