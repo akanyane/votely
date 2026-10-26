@@ -253,14 +253,25 @@ export function PaginaLive({ turno, s, onBusca }: Props) {
 function OutroTurno({ turno }: { turno: Turno }) {
   if (ELEICAO.turno !== 2) return null
   if (turno === 2) {
+    const estilo =
+      'flex min-h-12 items-center justify-between gap-2 rounded-lg border border-border bg-card px-4 text-[17px] font-bold text-accent-foreground no-underline hover:opacity-80'
     return (
-      <Link
-        to="/live/1-turno"
-        className="mb-4 flex min-h-12 items-center justify-between gap-2 rounded-lg border border-border bg-card px-4 text-[17px] font-bold text-accent-foreground no-underline hover:opacity-80"
-      >
-        Ver os resultados do 1º turno
-        <ChevronRightIcon className="size-[22px] flex-none" strokeWidth={2.6} />
-      </Link>
+      <div className="mb-4 grid gap-2 sm:grid-cols-2">
+        <Link to="/live/painel" className={estilo}>
+          Abrir o painel da apuração
+          <ChevronRightIcon
+            className="size-[22px] flex-none"
+            strokeWidth={2.6}
+          />
+        </Link>
+        <Link to="/live/1-turno" className={estilo}>
+          Ver os resultados do 1º turno
+          <ChevronRightIcon
+            className="size-[22px] flex-none"
+            strokeWidth={2.6}
+          />
+        </Link>
+      </div>
     )
   }
   return (
