@@ -17,7 +17,8 @@
     "municipios": "bun scripts/municipios.ts",
     "mapa:malha": "bun scripts/mapa-cidades-malha.ts",
     "mapa:cidades": "bun scripts/mapa-cidades.ts",
-    "presidios": "bun scripts/presidios.ts"
+    "presidios": "bun scripts/presidios.ts",
+    "secoes": "bun scripts/secoes.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
